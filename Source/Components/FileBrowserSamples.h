@@ -20,7 +20,7 @@ public:
         fileFilter(Parameters::fileSampleExtensions, "*", "Choose File"),
         juce::FileBrowserComponent(Parameters::fileChooserFlags, init_file, &fileFilter, NULL)
     {
-
+        addListener(this);
     };
 
     ~FileBrowserSamples() {};
