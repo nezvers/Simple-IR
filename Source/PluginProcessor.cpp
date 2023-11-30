@@ -24,6 +24,7 @@ PluginAudioProcessor::PluginAudioProcessor()
     , valueTreeState(*this, nullptr, "PARAMETERS", createParameterLayout())
 #endif
 {
+    currentFile = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
     valueTreeState.addParameterListener(Parameters::inputGainId, this);
     valueTreeState.addParameterListener(Parameters::mixId, this);
 
@@ -114,7 +115,7 @@ void PluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     mSpec.sampleRate = sampleRate;
     mSpec.numChannels = getTotalNumOutputChannels();
     
-    mixer.setMixingRule(juce::dsp::DryWetMixingRule::squareRoot3dB);
+    mixer.setMixingRule(juce::dsp::DryWetMixingRule::linear);
     //mBufferConvolution.setSize(2, samplesPerBlock, true, true, true);
 
     inputGain.prepare(mSpec);
