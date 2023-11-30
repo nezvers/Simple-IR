@@ -15,6 +15,8 @@
         <FILE id="tO3sIL" name="Globals.h" compile="0" resource="0" file="Source/Parameters/Globals.h"/>
       </GROUP>
       <GROUP id="{DD69F038-791D-01B0-0E14-3637EDEABE29}" name="Components">
+        <FILE id="VP87OC" name="FileBrowserSamples.h" compile="0" resource="0"
+              file="Source/Components/FileBrowserSamples.h"/>
         <FILE id="M8j6lk" name="SampleDrawer.h" compile="0" resource="0" file="Source/Components/SampleDrawer.h"/>
       </GROUP>
       <GROUP id="{99AAFD8C-C0A8-1311-ACA4-CBBEC05A90B4}" name="Assets">

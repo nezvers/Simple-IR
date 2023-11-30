@@ -22,8 +22,8 @@ const double gainMax = 30.0;
 const double panMin = 0.0;
 const double panMax = 1.0;
 
-const juce::String inputGainId = "inputGain";
-const juce::String inputGainName = "Input Gain";
+const juce::String outputGainId = "inputGain";
+const juce::String outputGainName = "Input Gain";
 
 const juce::String mixId = "mixID";
 const juce::String mixName = "mixID";
@@ -37,5 +37,5 @@ const juce::String root = "root";
 const int fileChooserFlags = juce::FileBrowserComponent::canSelectFiles |
 juce::FileBrowserComponent::canSelectDirectories |
 juce::FileBrowserComponent::openMode;
-const juce::String fileExtensions = "*wav;*aiff";
+const juce::String fileSampleExtensions = "*wav;*aiff";
 }

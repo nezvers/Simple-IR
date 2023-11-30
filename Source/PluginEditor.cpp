@@ -13,7 +13,7 @@
 //==============================================================================
 PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p),
-    fileFilter(Parameters::fileExtensions, "*", "Choose File"),
+    fileFilter(Parameters::fileSampleExtensions, "*", "Choose File"),
     fileBrowser(Parameters::fileChooserFlags, audioProcessor.currentFile, &fileFilter, NULL)
 {
     // --- Slider input gain ---
@@ -37,7 +37,7 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     addAndMakeVisible(fileBrowser);
 
 
-    attachmentInputGain = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, Parameters::inputGainId, sliderInputGain);
+    attachmentInputGain = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, Parameters::outputGainId, sliderInputGain);
     attachmentMix = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, Parameters::mixId, sliderMix);
 
     // Make sure that before the constructor has finished, you've set the
