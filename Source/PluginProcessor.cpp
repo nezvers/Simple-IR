@@ -33,7 +33,7 @@ PluginAudioProcessor::PluginAudioProcessor()
             {
                 "Group", {{"name", "IR Vars"}},{
                     {"Parameter",{{"id", Parameters::file1}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::root}, {"value", "/"}}}
+                    {"Parameter",{{"id", Parameters::file1Directory}, {"value", "/"}}}
                 }
             }
         }
@@ -267,7 +267,8 @@ void PluginAudioProcessor::setStateInformation (const void* data, int sizeInByte
     }
     variableTree = valueTreeState.state.getChildWithName(Parameters::variableTreeName);
     currentFile1 = juce::File(variableTree.getProperty(Parameters::file1));
-    currentDirectory1 = juce::File(variableTree.getProperty(Parameters::root));
+    currentDirectory1 = juce::File(variableTree.getProperty(Parameters::file1Directory));
+    
     if (!currentFile1.existsAsFile()) {
         return;
     }
@@ -280,6 +281,7 @@ void PluginAudioProcessor::setStateInformation (const void* data, int sizeInByte
     if (stateUpdate != nullptr) {
         stateUpdate();
     }
+    
 
 }
 
@@ -311,7 +313,7 @@ void PluginAudioProcessor::setIR1(juce::File fileIr)
     currentDirectory1 = fileIr.getParentDirectory().getFullPathName();
 
     variableTree.setProperty(Parameters::file1, fileIr.getFullPathName(), nullptr);
-    variableTree.setProperty(Parameters::root, fileIr.getParentDirectory().getFullPathName(), nullptr);
+    variableTree.setProperty(Parameters::file1Directory, fileIr.getParentDirectory().getFullPathName(), nullptr);
     convolution1.loadImpulseResponse(currentFile1,
         juce::dsp::Convolution::Stereo::yes,
         juce::dsp::Convolution::Trim::yes,

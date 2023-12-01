@@ -31,7 +31,7 @@ extern const juce::String mixName;
 extern const juce::String irFileId;
 extern const juce::String variableTreeName;
 extern const juce::String file1;
-extern const juce::String root;
+extern const juce::String file1Directory;
 
 extern const int fileChooserFlags;
 extern const juce::String fileSampleExtensions;

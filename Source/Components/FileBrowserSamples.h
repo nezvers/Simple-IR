@@ -13,14 +13,18 @@
 #include <JuceHeader.h>
 #include "../Parameters/Globals.h"
 
-class FileBrowserSamples : public juce::FileBrowserComponent, juce::FileBrowserListener
+class FileBrowserSamples : public juce::Component, public juce::FileBrowserListener
 {
 public:
-    FileBrowserSamples(juce::File init_file):
-        fileFilter(Parameters::fileSampleExtensions, "*", "Choose File"),
-        juce::FileBrowserComponent(Parameters::fileChooserFlags, init_file, &fileFilter, NULL)
+    FileBrowserSamples():
+        fileBrowser(juce::FileBrowserComponent::openMode |
+            juce::FileBrowserComponent::canSelectFiles |
+            juce::FileBrowserComponent::canSelectDirectories,
+            juce::File::getSpecialLocation(juce::File::userDocumentsDirectory), 
+            &fileFilter, NULL)
     {
-        addListener(this);
+        fileBrowser.addListener(this);
+        addAndMakeVisible(fileBrowser);
     };
 
     ~FileBrowserSamples() {};
@@ -30,6 +34,9 @@ public:
         }
     };
 
+    void resized() override { fileBrowser.setBounds(getBounds()); };
+
+    void paint(juce::Graphics&) override {};
     void selectionChanged() override {};
     void fileClicked(const File& file, const MouseEvent& e) override {};
     void browserRootChanged(const File& newRoot) override {};
@@ -37,5 +44,8 @@ public:
     std::function<void(juce::File)> onFileDoubleClick;
 
 private:
-    juce::WildcardFileFilter fileFilter; // { Parameters::fileExtensions, "*", "Choose File" };
+    juce::WildcardFileFilter fileFilter{ Parameters::fileSampleExtensions, "*", "Choose File" };
+    juce::FileBrowserComponent fileBrowser;
+
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FileBrowserSamples)
 };

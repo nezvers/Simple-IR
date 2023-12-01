@@ -16,8 +16,7 @@
 //==============================================================================
 /**
 */
-class PluginAudioProcessorEditor  : public juce::AudioProcessorEditor,
-    juce::FileBrowserListener
+class PluginAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
     PluginAudioProcessorEditor (PluginAudioProcessor&);
@@ -26,19 +25,17 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
-    void fileDoubleClicked(const File& file) override;
 
-    void selectionChanged() override {};
-    void fileClicked(const File& file, const MouseEvent& e) override {};
-    void browserRootChanged(const File& newRoot) override {};
 private:
+
 
 
     PluginAudioProcessor& audioProcessor;
     juce::Slider sliderOutputGain;
     juce::Slider sliderMix;
     SampleDrawer sampleDrawer;
-    
+    //FileBrowserSamples fileBrowser1;
+    FileBrowserSamples fileBrowser2;
     
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentInputGain;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentMix;

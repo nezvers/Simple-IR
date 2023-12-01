@@ -33,6 +33,8 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     */
 
     //addAndMakeVisible(sampleDrawer);
+    //addAndMakeVisible(fileBrowser1);
+    addAndMakeVisible(fileBrowser2);
 
     attachmentInputGain = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, Parameters::outputGainId, sliderOutputGain);
     attachmentMix = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, Parameters::mixId, sliderMix);
@@ -40,7 +42,7 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
     setSize (400, 300);
-    setResizable(true, true);
+    //setResizable(true, true);
 }
 
 PluginAudioProcessorEditor::~PluginAudioProcessorEditor()
@@ -52,7 +54,7 @@ void PluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
+    //g.fillAll(juce::Colour::fromRGB(0.1f, 0.1f, 0.1f));
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
     g.drawFittedText ("Simple IR", getLocalBounds(), juce::Justification::centredTop, 1.0f);
@@ -60,15 +62,13 @@ void PluginAudioProcessorEditor::paint (juce::Graphics& g)
 
 void PluginAudioProcessorEditor::resized()
 {
-    
-}
+    int width = getWidth();
+    int height = getHeight();
+    int middle = width / 2;
 
-void PluginAudioProcessorEditor::fileDoubleClicked(const File& file)
-{
-    if (file.getFileExtension() != ".wav" && file.getFileExtension() != ".aiff") {
-        return;
-    }
-    audioProcessor.setIR1(file);
+    int x = JUCE_LIVE_CONSTANT(0);
+    int w = JUCE_LIVE_CONSTANT(100);
+    fileBrowser2.setBounds(x,0,w, height);
 }
 
 

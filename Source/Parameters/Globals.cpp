@@ -32,10 +32,9 @@ const juce::String mixName = "mixID";
 const juce::String irFileId = "ir_file";
 const juce::String variableTreeName = "Variables";
 const juce::String file1 = "file1";
-const juce::String root = "root";
+const juce::String file1Directory = "file1directory";
 
-const int fileChooserFlags = juce::FileBrowserComponent::canSelectFiles |
-juce::FileBrowserComponent::canSelectDirectories |
-juce::FileBrowserComponent::openMode;
-const juce::String fileSampleExtensions = "*wav;*aiff";
+const int fileChooserFlags = juce::FileBrowserComponent::canSelectFiles | 
+    juce::FileBrowserComponent::canSelectDirectories | juce::FileBrowserComponent::openMode;
+const juce::String fileSampleExtensions = "*.wav;*.aiff";
 }
