@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "Components/SampleDrawer.h"
+#include "Components/FileBrowserSamples.h"
 
 //==============================================================================
 /**
@@ -34,13 +35,11 @@ private:
 
 
     PluginAudioProcessor& audioProcessor;
-    juce::Slider sliderInputGain;
+    juce::Slider sliderOutputGain;
     juce::Slider sliderMix;
     SampleDrawer sampleDrawer;
     
-    juce::WildcardFileFilter fileFilter;
-    juce::FileBrowserComponent fileBrowser;
-    std::unique_ptr<juce::FileChooser> fileChooser;
+    
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentInputGain;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentMix;
 

@@ -22,8 +22,8 @@ extern const double gainMax;
 extern const double panMin;
 extern const double panMax;
 
-extern const juce::String inputGainId;
-extern const juce::String inputGainName;
+extern const juce::String outputGainId;
+extern const juce::String outputGainName;
 
 extern const juce::String mixId;
 extern const juce::String mixName;
@@ -34,6 +34,6 @@ extern const juce::String file1;
 extern const juce::String root;
 
 extern const int fileChooserFlags;
-extern const juce::String fileExtensions;
+extern const juce::String fileSampleExtensions;
 
 }

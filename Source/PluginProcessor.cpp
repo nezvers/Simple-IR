@@ -24,8 +24,8 @@ PluginAudioProcessor::PluginAudioProcessor()
     , valueTreeState(*this, nullptr, "PARAMETERS", createParameterLayout())
 #endif
 {
-    currentFile = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
-    valueTreeState.addParameterListener(Parameters::inputGainId, this);
+    currentFile1 = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
+    valueTreeState.addParameterListener(Parameters::outputGainId, this);
     valueTreeState.addParameterListener(Parameters::mixId, this);
 
     variableTree = {
@@ -42,7 +42,7 @@ PluginAudioProcessor::PluginAudioProcessor()
 
 PluginAudioProcessor::~PluginAudioProcessor()
 {
-    valueTreeState.removeParameterListener(Parameters::inputGainId, this);
+    valueTreeState.removeParameterListener(Parameters::outputGainId, this);
     valueTreeState.removeParameterListener(Parameters::mixId, this);
 }
 
@@ -118,8 +118,9 @@ void PluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     mixer.setMixingRule(juce::dsp::DryWetMixingRule::linear);
     //mBufferConvolution.setSize(2, samplesPerBlock, true, true, true);
 
-    inputGain.prepare(mSpec);
-    convolution.prepare(mSpec);
+    outputGain.prepare(mSpec);
+    convolution1.prepare(mSpec);
+    convolution2.prepare(mSpec);
     mixer.prepare(mSpec);
     mixer.setWetMixProportion(0.0f);
 
@@ -127,10 +128,10 @@ void PluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     
 
 
-    double valueGain = valueTreeState.getRawParameterValue(Parameters::inputGainId)->load();
+    double valueGain = valueTreeState.getRawParameterValue(Parameters::outputGainId)->load();
 
-    inputGain.setRampDurationSeconds(0.01);
-    inputGain.setGainDecibels(valueGain);
+    outputGain.setRampDurationSeconds(0.01);
+    outputGain.setGainDecibels(valueGain);
 }
 
 void PluginAudioProcessor::releaseResources()
@@ -179,15 +180,15 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     juce::dsp::ProcessContextReplacing contextInput = juce::dsp::ProcessContextReplacing<float>(audioBlockInput);
     juce::dsp::ProcessContextReplacing contextConvolution = juce::dsp::ProcessContextReplacing<float>(audioBlockConvolver);
 
-    if (convolution.getCurrentIRSize() > 0) {
-        convolution.process(contextConvolution);
+    if (convolution1.getCurrentIRSize() > 0) {
+        convolution1.process(contextConvolution);
     }
 
     auto convolutionOutput = contextConvolution.getOutputBlock();
     mixer.pushDrySamples(audioBlockInput);
     mixer.mixWetSamples(convolutionOutput);
 
-    inputGain.process(contextConvolution);
+    outputGain.process(contextConvolution);
     buffer.makeCopyOf(mBufferConvolution);
     /*if (convolution.getCurrentIRSize() > 0) {
         convolution.process(juce::dsp::ProcessContextReplacing<float>(audioBlock));
@@ -265,13 +266,13 @@ void PluginAudioProcessor::setStateInformation (const void* data, int sizeInByte
         return;
     }
     variableTree = valueTreeState.state.getChildWithName(Parameters::variableTreeName);
-    currentFile = juce::File(variableTree.getProperty(Parameters::file1));
-    currentDirectory = juce::File(variableTree.getProperty(Parameters::root));
-    if (!currentFile.existsAsFile()) {
+    currentFile1 = juce::File(variableTree.getProperty(Parameters::file1));
+    currentDirectory1 = juce::File(variableTree.getProperty(Parameters::root));
+    if (!currentFile1.existsAsFile()) {
         return;
     }
 
-    convolution.loadImpulseResponse(currentFile,
+    convolution1.loadImpulseResponse(currentFile1,
         juce::dsp::Convolution::Stereo::yes,
         juce::dsp::Convolution::Trim::yes,
         0);
@@ -287,16 +288,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginAudioProcessor::create
     std::vector <std::unique_ptr<juce::RangedAudioParameter>> params;
     //params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::parameterId, Parameters::parameterName, -24.0f, 24.0f, 0.0f));
     params.push_back( std::make_unique<juce::AudioParameterFloat>(Parameters::mixId, Parameters::mixName, Parameters::panMin, Parameters::panMax, 0.5f) );
-    params.push_back( std::make_unique<juce::AudioParameterFloat>(Parameters::inputGainId, Parameters::inputGainName, Parameters::gainMin, Parameters::gainMax, 0.0f) );
+    params.push_back( std::make_unique<juce::AudioParameterFloat>(Parameters::outputGainId, Parameters::outputGainName, Parameters::gainMin, Parameters::gainMax, 0.0f) );
 
     return { params.begin(), params.end() };
 }
 
 void PluginAudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
 {
-    if (parameterID == Parameters::inputGainId) {
-        double valueGain = valueTreeState.getRawParameterValue(Parameters::inputGainId)->load();
-        inputGain.setGainDecibels(valueGain);
+    if (parameterID == Parameters::outputGainId) {
+        double valueGain = valueTreeState.getRawParameterValue(Parameters::outputGainId)->load();
+        outputGain.setGainDecibels(valueGain);
     }
     if (parameterID == Parameters::mixId) {
         double convolutionMix = valueTreeState.getRawParameterValue(Parameters::mixId)->load();
@@ -304,18 +305,18 @@ void PluginAudioProcessor::parameterChanged(const juce::String& parameterID, flo
     }
 }
 
-void PluginAudioProcessor::setFile(juce::File fileIr)
+void PluginAudioProcessor::setIR1(juce::File fileIr)
 {
-    currentFile = fileIr;
-    currentDirectory = fileIr.getParentDirectory().getFullPathName();
-    DBG(fileIr.getParentDirectory().getFullPathName());
+    currentFile1 = fileIr;
+    currentDirectory1 = fileIr.getParentDirectory().getFullPathName();
+
     variableTree.setProperty(Parameters::file1, fileIr.getFullPathName(), nullptr);
     variableTree.setProperty(Parameters::root, fileIr.getParentDirectory().getFullPathName(), nullptr);
-    convolution.loadImpulseResponse(currentFile,
+    convolution1.loadImpulseResponse(currentFile1,
         juce::dsp::Convolution::Stereo::yes,
         juce::dsp::Convolution::Trim::yes,
         0);
-    if (stateUpdate != nullptr && currentFile.existsAsFile()) {
+    if (stateUpdate != nullptr && currentFile1.existsAsFile()) {
         stateUpdate();
     }
 }

@@ -57,16 +57,18 @@ public:
     juce::AudioProcessorValueTreeState valueTreeState;
     juce::ValueTree variableTree;
 
-    juce::File currentDirectory, currentFile;
+    juce::File currentDirectory1, currentFile1;
+    juce::File currentDirectory2, currentFile2;
 
-    juce::dsp::Gain<float> inputGain;
-    juce::dsp::Convolution convolution;
+    juce::dsp::Gain<float> outputGain;
+    juce::dsp::Convolution convolution1;
+    juce::dsp::Convolution convolution2;
     juce::dsp::DryWetMixer<float> mixer;
 
     void parameterChanged(const juce::String& parameterID, float newValue) override;
     
     std::function<void()> stateUpdate;
-    void setFile(juce::File fileIr);
+    void setIR1(juce::File fileIr);
 
 private:
     juce::AudioBuffer<float> mBufferConvolution;
