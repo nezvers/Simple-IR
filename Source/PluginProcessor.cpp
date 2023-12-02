@@ -184,7 +184,7 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
         convolution1.process(contextConvolution);
     }
 
-    auto convolutionOutput = contextConvolution.getOutputBlock();
+    juce::dsp::AudioBlock convolutionOutput = contextConvolution.getOutputBlock();
     mixer.pushDrySamples(audioBlockInput);
     mixer.mixWetSamples(convolutionOutput);
 

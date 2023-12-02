@@ -34,7 +34,7 @@ private:
     juce::Slider sliderOutputGain;
     juce::Slider sliderMix;
     SampleDrawer sampleDrawer;
-    //FileBrowserSamples fileBrowser1;
+    FileBrowserSamples fileBrowser1;
     FileBrowserSamples fileBrowser2;
     
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentInputGain;

@@ -34,7 +34,7 @@ public:
         }
     };
 
-    void resized() override { fileBrowser.setBounds(getBounds()); };
+    void resized() override { fileBrowser.setBounds(getLocalBounds()); };
 
     void paint(juce::Graphics&) override {};
     void selectionChanged() override {};
