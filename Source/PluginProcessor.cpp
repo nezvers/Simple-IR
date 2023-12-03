@@ -24,29 +24,8 @@ PluginAudioProcessor::PluginAudioProcessor()
     , valueTreeState(*this, nullptr, "PARAMETERS", createParameterLayout())
 #endif
 {
+    linkParameters();
     currentFile1 = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
-    valueTreeState.addParameterListener(Parameters::id_gainOut, this);
-    valueTreeState.addParameterListener(Parameters::id_mix, this);
-
-    variableTree = {
-        Parameters::variableTreeName, {},{
-            {
-                "Group", {{"name", "IR Vars"}},{
-                    {"Parameter",{{"id", Parameters::param_file1}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::param_file2}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::param_file1Directory}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::param_file2Directory}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::param_stereoMode}, {"value", Parameters::DUAL_MONO}}},
-                }
-            }
-        }
-    };
-}
-
-PluginAudioProcessor::~PluginAudioProcessor()
-{
-    valueTreeState.removeParameterListener(Parameters::id_gainOut, this);
-    valueTreeState.removeParameterListener(Parameters::id_mix, this);
 }
 
 //==============================================================================
@@ -73,16 +52,26 @@ void PluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     convolutionIR1.prepare(mSpec);
     convolutionIR2.prepare(mSpec);
 
-
+    lowCutOut.sampleRate = sampleRate;
+    lowCutIR1.sampleRate = sampleRate;
+    lowCutIR2.sampleRate = sampleRate;
+    highCutOut.sampleRate = sampleRate;
+    highCutIR1.sampleRate = sampleRate;
+    highCutIR2.sampleRate = sampleRate;
+    lowCutOut.type = LowHighCutFilters::LOWCUT;
+    lowCutIR1.type = LowHighCutFilters::LOWCUT;
+    lowCutIR2.type = LowHighCutFilters::LOWCUT;
+    highCutOut.type = LowHighCutFilters::HIGHCUT;
+    highCutIR1.type = LowHighCutFilters::HIGHCUT;
+    highCutIR2.type = LowHighCutFilters::HIGHCUT;
 
     DBG("PREPARE TO PLAY");
     
-
-
     double valueGain = valueTreeState.getRawParameterValue(Parameters::id_gainOut)->load();
 
     gainOut.setRampDurationSeconds(0.01);
     gainOut.setGainDecibels(valueGain);
+    // TODO: initialize after state set.
 }
 
 void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
@@ -91,25 +80,29 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     //auto totalNumInputChannels  = getTotalNumInputChannels();
     //auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    mBufferConvolution.makeCopyOf(buffer, true);
+    mBufferIR1.makeCopyOf(buffer, true);
+    mBufferIR2.makeCopyOf(buffer, true);
 
-    juce::dsp::AudioBlock<float> audioBlockInput {buffer};
-    juce::dsp::AudioBlock<float> audioBlockConvolver {mBufferConvolution};
+    juce::dsp::AudioBlock<float> audioBlockIR1 {mBufferIR1};
+    juce::dsp::AudioBlock<float> audioBlockIR2 {mBufferIR2};
     
     
-    juce::dsp::ProcessContextReplacing contextInput = juce::dsp::ProcessContextReplacing<float>(audioBlockInput);
-    juce::dsp::ProcessContextReplacing contextConvolution = juce::dsp::ProcessContextReplacing<float>(audioBlockConvolver);
+    juce::dsp::ProcessContextReplacing contextConvolutionIR1 = juce::dsp::ProcessContextReplacing<float>(audioBlockIR1);
+    juce::dsp::ProcessContextReplacing contextConvolutionIR2 = juce::dsp::ProcessContextReplacing<float>(audioBlockIR2);
 
     if (convolutionIR1.getCurrentIRSize() > 0) {
-        convolutionIR1.process(contextConvolution);
+        convolutionIR1.process(contextConvolutionIR1);
+    }
+    if (convolutionIR2.getCurrentIRSize() > 0) {
+        convolutionIR2.process(contextConvolutionIR2);
     }
 
-    juce::dsp::AudioBlock convolutionOutput = contextConvolution.getOutputBlock();
-    mixer.pushDrySamples(audioBlockInput);
-    mixer.mixWetSamples(convolutionOutput);
+    mixer.pushDrySamples(contextConvolutionIR1.getOutputBlock());
+    mixer.mixWetSamples(contextConvolutionIR2.getOutputBlock()); // mix into IR2 buffer
 
-    gainOut.process(contextConvolution);
-    buffer.makeCopyOf(mBufferConvolution);
+    gainOut.process(contextConvolutionIR2);
+
+    buffer.makeCopyOf(mBufferIR1); // buffer from IR2
     
 }
 
@@ -173,11 +166,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginAudioProcessor::create
     params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_gainOut, Parameters::name_gainOut, Parameters::gainMin, Parameters::gainMax, 0.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_gainIR1, Parameters::name_gainIR1, Parameters::gainMin, Parameters::gainMax, 0.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_gainIR2, Parameters::name_gainIR2, Parameters::gainMin, Parameters::gainMax, 0.0f));
-    params.push_back(std::make_unique<juce::AudioParameterBool>(Parameters::id_bypassOut, Parameters::name_bypassOut, false, Parameters::buttonAtributes));
-    params.push_back(std::make_unique<juce::AudioParameterBool>(Parameters::id_bypassIR1, Parameters::name_bypassIR1, false, Parameters::buttonAtributes));
-    params.push_back(std::make_unique<juce::AudioParameterBool>(Parameters::id_bypassIR2, Parameters::name_bypassIR2, false, Parameters::buttonAtributes));
-    params.push_back(std::make_unique<juce::AudioParameterBool>(Parameters::id_invertIR1, Parameters::name_invertIR1, false, Parameters::buttonAtributes));
-    params.push_back(std::make_unique<juce::AudioParameterBool>(Parameters::id_invertIR2, Parameters::name_invertIR2, false, Parameters::buttonAtributes));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_lowCutOut, Parameters::name_lowCutOut, Parameters::freqMin, Parameters::freqMax, Parameters::freqMin));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_lowCutIR1, Parameters::name_lowCutIR1, Parameters::freqMin, Parameters::freqMax, Parameters::freqMin));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_lowCutIR2, Parameters::name_lowCutIR2, Parameters::freqMin, Parameters::freqMax, Parameters::freqMin));
@@ -188,6 +176,25 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginAudioProcessor::create
     params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_panIR2, Parameters::name_panIR2, Parameters::panMin, Parameters::panMax, 0.5f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_delayIR1, Parameters::name_delayIR1, Parameters::panMin, Parameters::panMax, 0.5f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_delayIR2, Parameters::name_delayIR2, Parameters::panMin, Parameters::panMax, 0.5f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_bypassOut, Parameters::name_bypassOut, Parameters::panMin, Parameters::panMax, 0.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_bypassIR1, Parameters::name_bypassIR1, Parameters::panMin, Parameters::panMax, 0.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_bypassIR2, Parameters::name_bypassIR2, Parameters::panMin, Parameters::panMax, 0.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_invertIR1, Parameters::name_invertIR1, Parameters::panMin, Parameters::panMax, 0.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_invertIR2, Parameters::name_invertIR2, Parameters::panMin, Parameters::panMax, 0.0f));
+
+    variableTree = {
+        Parameters::variableTreeName, {},{
+            {
+                "Group", {{"name", "IR Vars"}},{
+                    {"Parameter",{{"id", Parameters::param_file1}, {"value", "/"}}},
+                    {"Parameter",{{"id", Parameters::param_file2}, {"value", "/"}}},
+                    {"Parameter",{{"id", Parameters::param_file1Directory}, {"value", "/"}}},
+                    {"Parameter",{{"id", Parameters::param_file2Directory}, {"value", "/"}}},
+                    {"Parameter",{{"id", Parameters::param_stereoMode}, {"value", Parameters::DUAL_MONO}}},
+                }
+            }
+        }
+    };
 
     return { params.begin(), params.end() };
 }
@@ -196,6 +203,7 @@ void PluginAudioProcessor::parameterChanged(const juce::String& parameterID, flo
 {
     // TODO: optimize checking
     if (parameterID == Parameters::id_gainOut) {
+        DBG("GAIN CHANGED");
         double valueGain = valueTreeState.getRawParameterValue(Parameters::id_gainOut)->load();
         gainOut.setGainDecibels(valueGain);
     }
@@ -237,6 +245,37 @@ void PluginAudioProcessor::setIR2(juce::File fileIr)
     }
 }
 
+void PluginAudioProcessor::linkParameters()
+{
+    mixValue = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    gainValueOut = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    gainValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    gainValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    bypassValueOut = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    bypassValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    bypassValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    invertValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    invertValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    lowCutValueOut = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    lowCutValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    lowCutValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    highCutValueOut = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    highCutValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    highCutValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    panValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    panValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    delayValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+    delayValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
+}
+
+void PluginAudioProcessor::updateParameters()
+{
+    mixer.setWetMixProportion(mixValue->load());
+    gainOut.setGainDecibels(gainValueOut->load());
+    gainIR1.setGainDecibels(gainValueIR1->load());
+    gainIR2.setGainDecibels(gainValueIR2->load());
+}
+
 void PluginAudioProcessor::setStereo(Parameters::enumStereo value)
 {
     variableTree.setProperty(Parameters::param_stereoMode, value, nullptr);
@@ -245,6 +284,11 @@ void PluginAudioProcessor::setStereo(Parameters::enumStereo value)
 
 
 #pragma region DEFAULT
+
+PluginAudioProcessor::~PluginAudioProcessor()
+{
+
+}
 
 //==============================================================================
 const juce::String PluginAudioProcessor::getName() const
