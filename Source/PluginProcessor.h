@@ -55,26 +55,37 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+    void parameterChanged(const juce::String& parameterID, float newValue) override;
+    
+    void setIR1(juce::File fileIr);
+    void setIR2(juce::File fileIr);
+    // Sets stereo mode - mono, stereo, dual_mono
+    void setStereo(Parameters::enumStereo value);
+    std::function<void()> stateUpdate;
+
+
     juce::AudioProcessorValueTreeState valueTreeState;
     juce::ValueTree variableTree;
 
     juce::File currentDirectory1, currentFile1;
     juce::File currentDirectory2, currentFile2;
-
-    juce::dsp::Gain<float> outputGain;
-    juce::dsp::Convolution convolution1;
-    juce::dsp::Convolution convolution2;
-    juce::dsp::DryWetMixer<float> mixer;
-
-    void parameterChanged(const juce::String& parameterID, float newValue) override;
     
-    std::function<void()> stateUpdate;
-    void setIR1(juce::File fileIr);
-    void setIR2(juce::File fileIr);
-    // Sets stereo mode - mono, stereo, dual_mono
-    void setStereo(Parameters::enumStereo value);
+    bool invertedIR1 = false;
+    bool invertedIR2 = false;
+    bool bypassOut = false;
+    bool bypassIR1 = false;
+    bool bypassIR2 = false;
 
 private:
+    juce::dsp::DryWetMixer<float> mixer;
+    juce::dsp::DryWetMixer<float> panIR1;
+    juce::dsp::DryWetMixer<float> panIR2;
+    juce::dsp::Gain<float> gainOut;
+    juce::dsp::Gain<float> gainIR1;
+    juce::dsp::Gain<float> gainIR2;
+    juce::dsp::Convolution convolutionIR1;
+    juce::dsp::Convolution convolutionIR2;
+
     juce::AudioBuffer<float> mBufferConvolution;
     juce::dsp::ProcessSpec mSpec;
     Parameters::enumStereo mStereoMode;

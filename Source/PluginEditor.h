@@ -44,10 +44,10 @@ private:
     juce::Slider sliderPanIR2;
     juce::Slider sliderDelayIR1;
     juce::Slider sliderDelayIR2;
-    juce::Slider sliderLowPassIR1;
-    juce::Slider sliderLowPassIR2;
-    juce::Slider sliderHiPassIR1;
-    juce::Slider sliderHiPassIR2;
+    juce::Slider sliderLowCutIR1;
+    juce::Slider sliderLowCutIR2;
+    juce::Slider sliderHiCutIR1;
+    juce::Slider sliderHiCutIR2;
     juce::ImageButton buttonBypassIR1;
     juce::ImageButton buttonBypassIR2;
     juce::ImageButton buttonInvertIR1;
