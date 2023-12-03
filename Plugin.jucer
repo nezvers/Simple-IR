@@ -7,6 +7,10 @@
     <GROUP id="{479477B1-9971-EEA7-BCE5-586913716EB9}" name="Source">
       <GROUP id="{0055B7BF-8D39-C5B7-838C-39F99B48958A}" name="Library">
         <FILE id="xUDnxe" name="FileLoader.h" compile="0" resource="0" file="Source/Library/FileLoader.h"/>
+        <FILE id="vLb34U" name="LowHighCutFilters.cpp" compile="1" resource="0"
+              file="Source/Library/LowHighCutFilters.cpp"/>
+        <FILE id="OwzMto" name="LowHighCutFilters.h" compile="0" resource="0"
+              file="Source/Library/LowHighCutFilters.h"/>
         <FILE id="Q4tBhE" name="OneShotTimerCallback.h" compile="0" resource="0"
               file="Source/Library/OneShotTimerCallback.h"/>
       </GROUP>
