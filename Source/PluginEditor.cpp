@@ -36,7 +36,7 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     addAndMakeVisible(fileBrowserIR1);
     addAndMakeVisible(fileBrowserIR2);
 
-    attachmentOutGain = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, Parameters::id_gainOut, sliderGainOut);
+    attachmentGainOut = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, Parameters::id_gainOut, sliderGainOut);
     attachmentMix = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, Parameters::id_mix, sliderMix);
 
     setSize (400, 300);

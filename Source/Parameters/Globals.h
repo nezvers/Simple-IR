@@ -24,6 +24,8 @@ extern const float gainMin;
 extern const float gainMax;
 extern const float panMin;
 extern const float panMax;
+extern const float boolMin;
+extern const float boolMax;
 extern const float freqMin;
 extern const float freqMax;
 extern const float delayMin;
