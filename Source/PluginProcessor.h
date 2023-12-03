@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "Parameters/Globals.h"
+#include "Library/LowHighCutFilters.h"
 
 //==============================================================================
 /**
@@ -85,11 +86,42 @@ private:
     juce::dsp::Gain<float> gainIR2;
     juce::dsp::Convolution convolutionIR1;
     juce::dsp::Convolution convolutionIR2;
+    LowHighCutFilters lowCutOut;
+    LowHighCutFilters lowCutIR1;
+    LowHighCutFilters lowCutIR2;
+    LowHighCutFilters highCutOut;
+    LowHighCutFilters highCutIR1;
+    LowHighCutFilters highCutIR2;
 
-    juce::AudioBuffer<float> mBufferConvolution;
+
+    juce::AudioBuffer<float> mBufferIR1;
+    juce::AudioBuffer<float> mBufferIR2;
     juce::dsp::ProcessSpec mSpec;
     Parameters::enumStereo mStereoMode;
+
+    std::atomic<float>* mixValue;
+    std::atomic<float>* gainValueOut;
+    std::atomic<float>* gainValueIR1;
+    std::atomic<float>* gainValueIR2;
+    std::atomic<float>* bypassValueOut;
+    std::atomic<float>* bypassValueIR1;
+    std::atomic<float>* bypassValueIR2;
+    std::atomic<float>* invertValueIR1;
+    std::atomic<float>* invertValueIR2;
+    std::atomic<float>* lowCutValueOut;
+    std::atomic<float>* lowCutValueIR1;
+    std::atomic<float>* lowCutValueIR2;
+    std::atomic<float>* highCutValueOut;
+    std::atomic<float>* highCutValueIR1;
+    std::atomic<float>* highCutValueIR2;
+    std::atomic<float>* panValueIR1;
+    std::atomic<float>* panValueIR2;
+    std::atomic<float>* delayValueIR1;
+    std::atomic<float>* delayValueIR2;
+
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
+    void linkParameters();
+    void updateParameters();
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginAudioProcessor)
 };
