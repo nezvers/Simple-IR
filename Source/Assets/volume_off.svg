@@ -8,7 +8,7 @@
    viewBox="0 0 24 24"
    version="1.1"
    id="svg2"
-   sodipodi:docname="delay.svg"
+   sodipodi:docname="volume_off.svg"
    inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -24,9 +24,9 @@
      inkscape:pagecheckerboard="1"
      inkscape:deskcolor="#d1d1d1"
      showguides="true"
-     inkscape:zoom="0.81538251"
-     inkscape:cx="588.68077"
-     inkscape:cy="606.46383"
+     inkscape:zoom="1.630765"
+     inkscape:cx="296.18001"
+     inkscape:cy="422.50109"
      inkscape:window-width="3840"
      inkscape:window-height="2080"
      inkscape:window-x="3829"
@@ -131,26 +131,12 @@
        id="clipPath4">
       <path
          id="path4"
-         style="display:none;fill:#626262;fill-opacity:1;stroke:none;stroke-width:1.65;stroke-dasharray:none;stroke-dashoffset:0.45;stroke-opacity:1"
+         style="display:block;fill:#626262;fill-opacity:1;stroke:none;stroke-width:1.65;stroke-dasharray:none;stroke-dashoffset:0.45;stroke-opacity:1"
          d="m 22.204863,4.0325391 v 2.7056835 h 5.411426 V 4.0325391 Z M 12.969082,17.625996 v 2.809805 h 2.991914 v -2.809805 z" />
-      <path
-         id="lpe_path-effect4"
-         style="fill:#626262;fill-opacity:1;stroke:none;stroke-width:1.65;stroke-dasharray:none;stroke-dashoffset:0.45;stroke-opacity:1"
-         class="powerclip"
-         d="M -0.19629035,-0.4205418 H 30.819764 V 24.694251 H -0.19629035 Z M 22.204863,4.0325391 v 2.7056835 h 5.411426 V 4.0325391 Z M 12.969082,17.625996 v 2.809805 h 2.991914 v -2.809805 z" />
     </clipPath>
   </defs>
   <path
-     style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:1.65;stroke-dasharray:none;stroke-opacity:1"
-     d="m 1.5100144,4.9544052 c 6.7191133,0 3.7172327,14.3739818 10.5017546,14.3739818 6.721331,0 3.715693,-14.3707728 10.501754,-14.3707728"
-     id="path16"
-     sodipodi:nodetypes="ccc" />
-  <path
-     style="fill:none;fill-opacity:1;stroke:#fdfdfd;stroke-width:0.75;stroke-dasharray:1.5, 1.5;stroke-opacity:1;stroke-dashoffset:0.45"
-     d="m 4.8100144,4.9544052 c 6.7191136,0 3.7172327,14.3739818 10.5017546,14.3739818 6.721331,0 3.715693,-14.3707728 10.501754,-14.3707728"
-     id="path1"
-     sodipodi:nodetypes="ccc"
-     clip-path="url(#clipPath4)"
-     inkscape:path-effect="#path-effect4"
-     inkscape:original-d="m 4.8100144,4.9544052 c 6.7191136,0 3.7172327,14.3739818 10.5017546,14.3739818 6.721331,0 3.715693,-14.3707728 10.501754,-14.3707728" />
+     style="fill:#626262;fill-opacity:1;stroke:#fdfdfd;stroke-width:1.65;stroke-dasharray:none;stroke-dashoffset:15;stroke-opacity:1"
+     d="M 1.508943,12 H 22.491057"
+     id="path19" />
 </svg>
