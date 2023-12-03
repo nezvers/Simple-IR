@@ -33,11 +33,11 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     */
 
     //addAndMakeVisible(sampleDrawer);
-    addAndMakeVisible(fileBrowser1);
-    addAndMakeVisible(fileBrowser2);
+    addAndMakeVisible(fileBrowserIR1);
+    addAndMakeVisible(fileBrowserIR2);
 
-    attachmentOutGain = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, Parameters::outputGainId, sliderOutputGain);
-    attachmentMix = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, Parameters::mixId, sliderMix);
+    attachmentOutGain = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, Parameters::id_gainOut, sliderGainOut);
+    attachmentMix = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.valueTreeState, Parameters::id_mix, sliderMix);
 
     setSize (400, 300);
     setResizable(true, true);
@@ -68,8 +68,8 @@ void PluginAudioProcessorEditor::resized()
     DBG(juce::String(middle) + ", " + juce::String(height));
 
     int fileBrowserWidth = juce::jmax(middle, 82);
-    fileBrowser1.setBounds(0, 0, fileBrowserWidth, height);
-    fileBrowser2.setBounds(middle,0, fileBrowserWidth, height);
+    fileBrowserIR1.setBounds(0, 0, fileBrowserWidth, height);
+    fileBrowserIR2.setBounds(middle,0, fileBrowserWidth, height);
 }
 
 

@@ -29,53 +29,57 @@ public:
 private:
 
     PluginAudioProcessor& audioProcessor;
-    juce::Slider sliderOutputGain;
+    // Main
+    juce::Slider sliderGainOut;
     juce::Slider sliderMix;//
     SampleDrawer sampleDrawer;
-    juce::Slider sliderLowPassOut;
-    juce::Slider sliderHiPassOut;
+    juce::Slider sliderLowCutOut;
+    juce::Slider sliderHiCutOut;
     juce::ImageButton buttonBypassOut;
-    juce::ImageButton buttonStereo;
+    juce::ImageButton buttonStereoMode;
+    // Channels
+    juce::Slider sliderGainIR1;
+    juce::Slider sliderGainIR2;
+    juce::Slider sliderPanIR1;
+    juce::Slider sliderPanIR2;
+    juce::Slider sliderDelayIR1;
+    juce::Slider sliderDelayIR2;
+    juce::Slider sliderLowPassIR1;
+    juce::Slider sliderLowPassIR2;
+    juce::Slider sliderHiPassIR1;
+    juce::Slider sliderHiPassIR2;
+    juce::ImageButton buttonBypassIR1;
+    juce::ImageButton buttonBypassIR2;
+    juce::ImageButton buttonInvertIR1;
+    juce::ImageButton buttonInvertIR2;
+    FileBrowserSamples fileBrowserIR1;
+    FileBrowserSamples fileBrowserIR2;
 
-    juce::Slider sliderIrGain1;
-    juce::Slider sliderIrGain2;
-    juce::Slider sliderIrpan1;
-    juce::Slider sliderIrpan2;
-    juce::Slider sliderIrDelay1;
-    juce::Slider sliderIrDelay2;
-    juce::Slider sliderIrLowPass1;
-    juce::Slider sliderIrLowPass2;
-    juce::Slider sliderIrHiPass1;
-    juce::Slider sliderIrHiPass2;
-    juce::ImageButton buttonIrBypass1;
-    juce::ImageButton buttonIrBypass2;
-    juce::ImageButton buttonIrInvert1;
-    juce::ImageButton buttonIrInvert2;
-
-    FileBrowserSamples fileBrowser1;
-    FileBrowserSamples fileBrowser2;
     
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentOutGain;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentMix;//
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentLowPassOut;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentHiPassOut;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachmentBypassOut;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachmentStareoOut;
-
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentIrGain1;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentIrGain2;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentIrPan1;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentIrPan2;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentIrDelay1;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentIrDelay2;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentIrLowPass1;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentIrLowPass2;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentIrHiPass1;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> attachmentIrHiPass2;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachmentIrBypass1;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachmentIrBypass2;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachmentIrInvert1;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> attachmentIrInvert2;
+    using nSliderAttachment = std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>;
+    using nButtonAttachment = std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>;
+    // Main
+    nSliderAttachment attachmentOutGain;
+    nSliderAttachment attachmentMix;//
+    nSliderAttachment attachmentLowCutOut;
+    nSliderAttachment attachmentHiCutOut;
+    nButtonAttachment attachmentBypassOut;
+    nButtonAttachment attachmentStereoOut;
+    // Channels
+    nSliderAttachment attachmentGainIR1;
+    nSliderAttachment attachmentGainIR2;
+    nSliderAttachment attachmentPanIR1;
+    nSliderAttachment attachmentPanIR2;
+    nSliderAttachment attachmentDelayIR1;
+    nSliderAttachment attachmentDelayIR2;
+    nSliderAttachment attachmentLowCutIR1;
+    nSliderAttachment attachmentLowCutIR2;
+    nSliderAttachment attachmentHiCutIR1;
+    nSliderAttachment attachmentHiCutIR2;
+    nButtonAttachment attachmentBypassIR1;
+    nButtonAttachment attachmentBypassIR2;
+    nButtonAttachment attachmentInvertIR1;
+    nButtonAttachment attachmentInvertIR2;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginAudioProcessorEditor)
 };

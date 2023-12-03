@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Parameters/Globals.h"
 
 //==============================================================================
 /**
@@ -69,10 +70,14 @@ public:
     
     std::function<void()> stateUpdate;
     void setIR1(juce::File fileIr);
+    void setIR2(juce::File fileIr);
+    // Sets stereo mode - mono, stereo, dual_mono
+    void setStereo(Parameters::enumStereo value);
 
 private:
     juce::AudioBuffer<float> mBufferConvolution;
     juce::dsp::ProcessSpec mSpec;
+    Parameters::enumStereo mStereoMode;
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginAudioProcessor)
