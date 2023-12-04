@@ -26,6 +26,21 @@ PluginAudioProcessor::PluginAudioProcessor()
 {
     linkParameters();
     currentFile1 = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
+
+
+    variableTree = {
+        Parameters::variableTreeName, {},{
+            {
+                "Group", {{"name", "IR Vars"}},{
+                    {"Parameter",{{"id", Parameters::param_file1}, {"value", "/"}}},
+                    {"Parameter",{{"id", Parameters::param_file2}, {"value", "/"}}},
+                    {"Parameter",{{"id", Parameters::param_file1Directory}, {"value", "/"}}},
+                    {"Parameter",{{"id", Parameters::param_file2Directory}, {"value", "/"}}},
+                    {"Parameter",{{"id", Parameters::param_stereoMode}, {"value", Parameters::DUAL_MONO}}}
+                }
+            }
+        }
+    };
 }
 
 //==============================================================================
@@ -79,7 +94,7 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     //juce::ScopedNoDenormals noDenormals;
     //auto totalNumInputChannels  = getTotalNumInputChannels();
     //auto totalNumOutputChannels = getTotalNumOutputChannels();
-
+    /*
     mBufferIR1.makeCopyOf(buffer, true);
     mBufferIR2.makeCopyOf(buffer, true);
 
@@ -103,6 +118,7 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     gainOut.process(contextConvolutionIR2);
 
     buffer.makeCopyOf(mBufferIR1); // buffer from IR2
+    */
     
 }
 
@@ -182,19 +198,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout PluginAudioProcessor::create
     params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_invertIR1, Parameters::name_invertIR1, Parameters::panMin, Parameters::panMax, 0.0f));
     params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_invertIR2, Parameters::name_invertIR2, Parameters::panMin, Parameters::panMax, 0.0f));
 
-    variableTree = {
-        Parameters::variableTreeName, {},{
-            {
-                "Group", {{"name", "IR Vars"}},{
-                    {"Parameter",{{"id", Parameters::param_file1}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::param_file2}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::param_file1Directory}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::param_file2Directory}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::param_stereoMode}, {"value", Parameters::DUAL_MONO}}},
-                }
-            }
-        }
-    };
 
     return { params.begin(), params.end() };
 }

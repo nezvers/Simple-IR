@@ -70,12 +70,6 @@ public:
 
     juce::File currentDirectory1, currentFile1;
     juce::File currentDirectory2, currentFile2;
-    
-    bool invertedIR1 = false;
-    bool invertedIR2 = false;
-    bool bypassOut = false;
-    bool bypassIR1 = false;
-    bool bypassIR2 = false;
 
 private:
     juce::dsp::DryWetMixer<float> mixer;

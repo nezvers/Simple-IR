@@ -1,41 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="jgia9Z" name="Simple IR" projectType="audioplug" useAppConfig="0"
+<JUCERPROJECT id="WYLBg7" name="IR Simpler" projectType="audioplug" useAppConfig="0"
               addUsingNamespaceToJuceHeader="1" displaySplashScreen="1" jucerFormatVersion="1"
-              companyName="NeZvers" includeBinaryInJuceHeader="1">
-  <MAINGROUP id="VLtD9W" name="Simple IR">
-    <GROUP id="{479477B1-9971-EEA7-BCE5-586913716EB9}" name="Source">
-      <GROUP id="{0055B7BF-8D39-C5B7-838C-39F99B48958A}" name="Library">
-        <FILE id="xUDnxe" name="FileLoader.h" compile="0" resource="0" file="Source/Library/FileLoader.h"/>
-        <FILE id="vLb34U" name="LowHighCutFilters.cpp" compile="1" resource="0"
+              includeBinaryInJuceHeader="1" maxBinaryFileSize="10485760" pluginManufacturer="NeZvers">
+  <MAINGROUP id="LTHKws" name="IR Simpler">
+    <GROUP id="{D405738E-BA6E-3AE9-8559-A97E59BFDD5B}" name="Source">
+      <GROUP id="{0090DFEF-FBBB-ED1C-F8FA-68DABB729E27}" name="Parameters">
+        <FILE id="VCd1qN" name="Globals.cpp" compile="1" resource="0" file="Source/Parameters/Globals.cpp"/>
+        <FILE id="gogWPy" name="Globals.h" compile="0" resource="0" file="Source/Parameters/Globals.h"/>
+      </GROUP>
+      <GROUP id="{8481574B-BF31-ED90-63F8-631E812630D4}" name="Library">
+        <FILE id="c1JkJo" name="FileLoader.h" compile="0" resource="0" file="Source/Library/FileLoader.h"/>
+        <FILE id="cZYg5q" name="LowHighCutFilters.cpp" compile="1" resource="0"
               file="Source/Library/LowHighCutFilters.cpp"/>
-        <FILE id="OwzMto" name="LowHighCutFilters.h" compile="0" resource="0"
+        <FILE id="sYKmWP" name="LowHighCutFilters.h" compile="0" resource="0"
               file="Source/Library/LowHighCutFilters.h"/>
-        <FILE id="Q4tBhE" name="OneShotTimerCallback.h" compile="0" resource="0"
+        <FILE id="MhgQ71" name="OneShotTimerCallback.h" compile="0" resource="0"
               file="Source/Library/OneShotTimerCallback.h"/>
       </GROUP>
-      <GROUP id="{2B307D76-48BC-CC7D-35BD-66C6BD946867}" name="Parameters">
-        <FILE id="TmC3sX" name="Globals.cpp" compile="1" resource="0" file="Source/Parameters/Globals.cpp"/>
-        <FILE id="tO3sIL" name="Globals.h" compile="0" resource="0" file="Source/Parameters/Globals.h"/>
-      </GROUP>
-      <GROUP id="{DD69F038-791D-01B0-0E14-3637EDEABE29}" name="Components">
-        <FILE id="VP87OC" name="FileBrowserSamples.h" compile="0" resource="0"
+      <GROUP id="{B2B899B3-11AF-8001-9C31-EC0270543615}" name="Components">
+        <FILE id="a2niaN" name="FileBrowserSamples.h" compile="0" resource="0"
               file="Source/Components/FileBrowserSamples.h"/>
-        <FILE id="M8j6lk" name="SampleDrawer.h" compile="0" resource="0" file="Source/Components/SampleDrawer.h"/>
+        <FILE id="BdbCKR" name="SampleDrawer.h" compile="0" resource="0" file="Source/Components/SampleDrawer.h"/>
       </GROUP>
-      <GROUP id="{99AAFD8C-C0A8-1311-ACA4-CBBEC05A90B4}" name="Assets">
-        <FILE id="rzeqEC" name="SMGV30_2023_440pure.wav" compile="0" resource="1"
-              file="Source/Assets/SMGV30_2023_440pure.wav"/>
-        <FILE id="iORsrk" name="SMGV30_2023_sm57.wav" compile="0" resource="1"
-              file="Source/Assets/SMGV30_2023_sm57.wav"/>
+      <GROUP id="{C086AF3A-F90F-2376-A153-53E13AD00481}" name="Assets">
+        <FILE id="naRhnC" name="bypass.svg" compile="0" resource="1" file="Source/Assets/bypass.svg"/>
+        <FILE id="PsEkVK" name="Collection.svg" compile="0" resource="1" file="Source/Assets/Collection.svg"/>
+        <FILE id="oMkDXY" name="delay.svg" compile="0" resource="1" file="Source/Assets/delay.svg"/>
+        <FILE id="pOQxjZ" name="phase_bypass_off.svg" compile="0" resource="1"
+              file="Source/Assets/phase_bypass_off.svg"/>
+        <FILE id="YuZq4i" name="phase_bypass_on.svg" compile="0" resource="1"
+              file="Source/Assets/phase_bypass_on.svg"/>
+        <FILE id="vgMs5S" name="phase_invert_cross.svg" compile="0" resource="1"
+              file="Source/Assets/phase_invert_cross.svg"/>
+        <FILE id="EsFT7J" name="phase_invert_cross_cut.svg" compile="0" resource="1"
+              file="Source/Assets/phase_invert_cross_cut.svg"/>
+        <FILE id="bx2EAY" name="phase_invert_wave_down.svg" compile="0" resource="1"
+              file="Source/Assets/phase_invert_wave_down.svg"/>
+        <FILE id="HBdo0a" name="phase_invert_wave_up.svg" compile="0" resource="1"
+              file="Source/Assets/phase_invert_wave_up.svg"/>
+        <FILE id="B39dMz" name="phase_stereo_layered.svg" compile="0" resource="1"
+              file="Source/Assets/phase_stereo_layered.svg"/>
+        <FILE id="j5k2Lu" name="phase_stereo_wave_overlap.svg" compile="0"
+              resource="1" file="Source/Assets/phase_stereo_wave_overlap.svg"/>
+        <FILE id="dHyfcJ" name="volume.svg" compile="0" resource="1" file="Source/Assets/volume.svg"/>
+        <FILE id="tatj43" name="volume_off.svg" compile="0" resource="1" file="Source/Assets/volume_off.svg"/>
       </GROUP>
-      <FILE id="zcBGhP" name="PluginProcessor.cpp" compile="1" resource="0"
+      <FILE id="AyXSBq" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
-      <FILE id="iHVB9M" name="PluginProcessor.h" compile="0" resource="0"
+      <FILE id="lGuMaR" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
-      <FILE id="CTkbPO" name="PluginEditor.cpp" compile="1" resource="0"
+      <FILE id="ICwQ6i" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
-      <FILE id="bm1df2" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <FILE id="iHPCKq" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
     </GROUP>
   </MAINGROUP>
   <MODULES>
@@ -58,8 +75,8 @@
   <EXPORTFORMATS>
     <VS2022 targetFolder="Builds/VisualStudio2022">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="Plugin"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="Plugin"/>
+        <CONFIGURATION isDebug="1" name="Debug" targetName="IR Simpler" enablePluginBinaryCopyStep="1"/>
+        <CONFIGURATION isDebug="0" name="Release" targetName="IR Simpler"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_audio_basics" path="D:/Dev/JUCE/juce-7.0.9/JUCE/modules"/>
@@ -70,11 +87,11 @@
         <MODULEPATH id="juce_audio_utils" path="D:/Dev/JUCE/juce-7.0.9/JUCE/modules"/>
         <MODULEPATH id="juce_core" path="D:/Dev/JUCE/juce-7.0.9/JUCE/modules"/>
         <MODULEPATH id="juce_data_structures" path="D:/Dev/JUCE/juce-7.0.9/JUCE/modules"/>
+        <MODULEPATH id="juce_dsp" path="D:/Dev/JUCE/juce-7.0.9/JUCE/modules"/>
         <MODULEPATH id="juce_events" path="D:/Dev/JUCE/juce-7.0.9/JUCE/modules"/>
         <MODULEPATH id="juce_graphics" path="D:/Dev/JUCE/juce-7.0.9/JUCE/modules"/>
         <MODULEPATH id="juce_gui_basics" path="D:/Dev/JUCE/juce-7.0.9/JUCE/modules"/>
         <MODULEPATH id="juce_gui_extra" path="D:/Dev/JUCE/juce-7.0.9/JUCE/modules"/>
-        <MODULEPATH id="juce_dsp" path="D:/Dev/JUCE/juce-7.0.9/JUCE/modules"/>
       </MODULEPATHS>
     </VS2022>
   </EXPORTFORMATS>
