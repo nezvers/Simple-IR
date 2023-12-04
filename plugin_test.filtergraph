@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FILTERGRAPH>
+  <FILTER uid="1" x="0.5" y="0.1" useARA="0">
+    <PLUGIN name="Audio Input" descriptiveName="" format="Internal" category="I/O devices"
+            manufacturer="JUCE" version="1.0" file="" uniqueId="246006c0"
+            isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="0"
+            numOutputs="2" isShell="0" hasARAExtension="0" uid="246006c0"/>
+    <STATE>0.</STATE>
+    <LAYOUT>
+      <INPUTS>
+        <BUS index="0" layout="disabled"/>
+      </INPUTS>
+      <OUTPUTS>
+        <BUS index="0" layout="L R"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+  <FILTER uid="2" x="0.25" y="0.1" useARA="0">
+    <PLUGIN name="MIDI Input" descriptiveName="" format="Internal" category="I/O devices"
+            manufacturer="JUCE" version="1.0" file="" uniqueId="a9e4f9eb"
+            isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="0"
+            numOutputs="0" isShell="0" hasARAExtension="0" uid="a9e4f9eb"/>
+    <STATE>0.</STATE>
+    <LAYOUT>
+      <INPUTS>
+        <BUS index="0" layout="disabled"/>
+      </INPUTS>
+      <OUTPUTS>
+        <BUS index="0" layout="disabled"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+  <FILTER uid="3" x="0.5" y="0.9" useARA="0">
+    <PLUGIN name="Audio Output" descriptiveName="" format="Internal" category="I/O devices"
+            manufacturer="JUCE" version="1.0" file="" uniqueId="724248cb"
+            isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="2"
+            numOutputs="0" isShell="0" hasARAExtension="0" uid="724248cb"/>
+    <STATE>0.</STATE>
+    <LAYOUT>
+      <INPUTS>
+        <BUS index="0" layout="L R"/>
+      </INPUTS>
+      <OUTPUTS>
+        <BUS index="0" layout="disabled"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+  <FILTER uid="4" x="0.25" y="0.9" useARA="0">
+    <PLUGIN name="MIDI Output" descriptiveName="" format="Internal" category="I/O devices"
+            manufacturer="JUCE" version="1.0" file="" uniqueId="9d5bbb00"
+            isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="0"
+            numOutputs="0" isShell="0" hasARAExtension="0" uid="9d5bbb00"/>
+    <STATE>0.</STATE>
+    <LAYOUT>
+      <INPUTS>
+        <BUS index="0" layout="disabled"/>
+      </INPUTS>
+      <OUTPUTS>
+        <BUS index="0" layout="disabled"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+  <FILTER uid="6" x="0.4725" y="0.2857142857142857" useARA="0" uiLastX_Normal="5"
+          uiLastY_Normal="211" uiopen_Normal="0">
+    <PLUGIN name="Proteus" format="VST3" category="Fx|Distortion" manufacturer="GuitarML"
+            version="1.2.0" file="C:\Program Files\Common Files\VST3\Proteus.vst3\Contents\x86_64-win\Proteus.vst3"
+            uniqueId="45efe1f1" isInstrument="0" fileTime="1857fc64390" infoUpdateTime="18c3440a7e4"
+            numInputs="2" numOutputs="2" isShell="0" hasARAExtension="0"
+            uid="2c963957"/>
+    <STATE>743.VMjLg3s....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9PyMy3hUMoFSmAUVt3hKt7zJlcUXxEDZisVRxH1a3vVX3fjTLQmKogjYTwVXogiQY8FMwjENHIUUTkEUKMCR38TNtHzSPUjZTEDLTEEUUoFUlgULiUVSGM1YQcUV3fjTLglKnkUc2YTVqkzUOg1Lp4jXAUTXvLlUZQWSGc0QUckV5UDahI1XTM1aQcEV3ACQSIVPqIVcQcUVvzzQHYWRxDFaqYTXq0TaHYFSWgULUYTVkASLgoVUFEFNHg1T0XWQTIWUxj0azDiXhMFUi8VTWgEd2ASTvrlQicVRWMES2UDU3giQisVUxHlYtzlX0kkUZIWUwHlXvPUV4UjQH0TQrIVbAIkVu0TLJYFUVIlY2vVVrQCZZkGNrEFZtfGVvjTahsFMFMVYvDSXpUkQgU1ZrElZUYDY3fjTLglK3g0YIEyU4E0UXoWUV8DZDkFR4X2PTETRUAUSAIkVpASZHgVQwHVdIIDRwTjQgASUV8DZtj1R1gDdKkicCQUPIUETMEjTZoFLogjZIckVwTEaHYFVWgkbUcUV3fjPLQGUogTcyLzSPUjZTEDLDgzaQY0SnYmUYESUFEFZtf1XmcmUisFLogjcyHUSncCZOciKUAkTEQ0TlolQYgCRRE1aQwFRlg0UXIWUWkENHIDSz4RZHU2LC8DTEoFUAACQH8VTV8DZP0lXqkjQgsVRBgTLEYTXvTkUOglKosjcHg2R4XWdKAUQpQUPvPUTTUkZTkiKt3hKt3hKt3hKt3haTU0PUQDU3sFaicVTWkEQEYzXmEDTtDDRTQlcEEiX4EDTtDDSt3xXt3hKt3hKt3hKlIUUMQUTPkzUZESQFM1ZQQEV5UjQ77RRC8Vav8lak4Fc9vyKVMEUy.Ea0cVZtMEcgQWY9..</STATE>
+    <LAYOUT>
+      <INPUTS>
+        <BUS index="0" layout="L R"/>
+      </INPUTS>
+      <OUTPUTS>
+        <BUS index="0" layout="L R"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+  <FILTER uid="7" x="0.46125" y="0.5168067226890757" useARA="0" uiLastX_Normal="814"
+          uiLastY_Normal="714" uiopen_Normal="1">
+    <PLUGIN name="IR Simpler" format="VST3" category="Fx" manufacturer="NeZvers"
+            version="1.0.0" file="O:\Projects\Juce\Simple IR\Builds\VisualStudio2022\x64\Debug\VST3\IR Simpler.vst3\Contents\x86_64-win\IR Simpler.vst3"
+            uniqueId="4adde17" isInstrument="0" fileTime="18c343d022b" infoUpdateTime="18c3440a7e4"
+            numInputs="2" numOutputs="2" isShell="0" hasARAExtension="0"
+            uid="e95bd8fd"/>
+    <STATE>1483.VMjLgHbA...O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9DCLxbiKV0jZLc1L13hKt3xSqX1UgIWPnM1ZIIiXugCaggCRRwDctjFRlQEagkFNFk0azDSV3fjTUQUVTszLHg2S43hPOAUQpQUPvPUTTUkZTMEMC8DTEoFUAACQH8VTV8DZlQkVCU0QikTRUwDZtf1XmcmUisFLogDdtLDS14RZKYGR3sTN1MDUAkTUP0TPRokZvjFRHsVLPASTWIkTIkFRlg0UXIWUWkENHgFS14xPLY2LBwDZ2f1S23RUPIUQTMkYpYTV3fjPR8VSTMld3P0X5kjPHESQFEFLUY0SngzPLYmKCwDctjFR0MyPOAUQpQUPvPDRuEkUOgFRVQlcEEiX4slZTcGRBgTLEYTXvTkUOglKosjcHg2R4X2PTETRUAUSAIkVpASZHg1ZGI1YMIiXIkzZLglKnM1Y2Y0XqASZHY2LBwDZ2f1S23RUPIUQTMkYpYTV3fDZXQSPWgUdMIyTvDUaHYFVWgkbUcUV3fjPLQmKogTcyLzSPUjZTEDLDgzaQY0SnAkUYIWQVQVRIUESn4BZic1cVM1ZvjFR1MiTMg1Mn8zMtTETRUDUSYlZFkENHITVqcmUXQyZpQEdHIDRwTjQgASUV8DZtj1RvfDdKkicCQUPIUETMEjTZoFLogTaEYkVzslZTcGRBgTLEYTXvTkUOglKosjcHg2R4X2PTETRUAUSAIkVpASZH0VQVoEcqoFU3gjPHESQFEFLUY0Sn4RZKYGR3sTN1MDUAkTUP0TPRokZvjFRsUjUZQGNTMldIIDRwTjQgASUV8DZtj1R1gDdKkicCQUPIUETMEjTZoFLogzazv1XqkzQikTRUwDZtf1XmcmUisFLogjcyHDSncCZOciKUAkTEQ0TlolQYgCRRoEcYcUV3E0URIURogjYXcEVxU0UYgCRBwDctjFR0MyPOAUQpQUPvPDRuEkUOglcwDlLMQ0X5slZTcGRBgTLEYTXvTkUOgFRCwDctjFR0MyPOAUQpQUPvPDRuEkUOglcwDlLMQ0X5slZTgGRBgTLEYTXvTkUOgFRCwDctjFR0MyPOAUQpQUPvPDRuEkUOglcwDlLMQ0X5gCUioWRBgTLEYTXvTkUOgFRCwDctjFR0MyPOAUQpQUPvPDRuEkUOgldVo0LIIDRwTjQgASUV8DZtj1R1gDdKkicCQUPIUETMEjTZoFLogjcEwVXIkTULglKnM1Y2Y0XqASZHY2LR0DZ2f1S23RUPIUQTMkYpYTV3fjPhcFMVIkTIkFRlg0UXIWUWkENHIDSzQUZHU2LC8jUEwlXuUDaXIWUwHVN1kWT3giUiYWPnE1YvXUV3fjTRIUPnU0YIIiXnMyPOAUQrI1YvXUV5UEahYlZFkENHgVVucmUYcGRBgTLEYTXvTkUOg1MngTcyLzSPUDahcFLVkkdUwlXlolQYgCRnk0a2YUV3gjPHESQFEFLUY0SncCZHU2LC8DTEwlXmAiUYoWUrIlYpYTV3fDZY81cVk0cPYkV3UULXoGNrIFMIIDRwTjQgASUV8DZ2fFR0MyPOAUQrI1YvXUV5UEahYlZFkENHgVVucmUYcGTVoEdUECV5gCahQSRBgTLEYTXvTkUOg1MngTcyLzSPUDahcFLVkkdUwlXlolQYgCR3IldUwlXqgCaHYFVWgkbUcUV3fDZLg1Mn8zM2fWT3giUiYGMC8TcXUEV3slUXg1cVkUdzLzS04RUPIUQTMUQQUUTR0zZO4hKt3hKt3hKt3hKtnTUv.UQAslXuk0UXoWUFE0YQcEVtPDTtHzZGI1YMIiXtPDTtLjKPcjKt3hKt3hKt3haTU0PUQDU3sFaicVTWkEQEYzXmEDOujzPu0Fbu4VYtQmO77hUSQ0LPwVcmklaSQWXzUlO..</STATE>
+    <LAYOUT>
+      <INPUTS>
+        <BUS index="0" layout="L R"/>
+      </INPUTS>
+      <OUTPUTS>
+        <BUS index="0" layout="L R"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+  <CONNECTION srcFilter="1" srcChannel="0" dstFilter="6" dstChannel="0"/>
+  <CONNECTION srcFilter="6" srcChannel="0" dstFilter="7" dstChannel="0"/>
+  <CONNECTION srcFilter="6" srcChannel="0" dstFilter="7" dstChannel="1"/>
+  <CONNECTION srcFilter="7" srcChannel="0" dstFilter="3" dstChannel="0"/>
+  <CONNECTION srcFilter="7" srcChannel="1" dstFilter="3" dstChannel="1"/>
+</FILTERGRAPH>

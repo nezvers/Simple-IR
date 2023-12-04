@@ -94,7 +94,7 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     //juce::ScopedNoDenormals noDenormals;
     //auto totalNumInputChannels  = getTotalNumInputChannels();
     //auto totalNumOutputChannels = getTotalNumOutputChannels();
-    /*
+    
     mBufferIR1.makeCopyOf(buffer, true);
     mBufferIR2.makeCopyOf(buffer, true);
 
@@ -118,7 +118,6 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     gainOut.process(contextConvolutionIR2);
 
     buffer.makeCopyOf(mBufferIR1); // buffer from IR2
-    */
     
 }
 
