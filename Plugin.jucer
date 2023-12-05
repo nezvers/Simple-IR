@@ -17,6 +17,8 @@
               file="Source/Library/LowHighCutFilters.h"/>
         <FILE id="MhgQ71" name="OneShotTimerCallback.h" compile="0" resource="0"
               file="Source/Library/OneShotTimerCallback.h"/>
+        <FILE id="vhIeoN" name="ProcessorGroup.h" compile="0" resource="0"
+              file="Source/Library/ProcessorGroup.h"/>
       </GROUP>
       <GROUP id="{B2B899B3-11AF-8001-9C31-EC0270543615}" name="Components">
         <FILE id="a2niaN" name="FileBrowserSamples.h" compile="0" resource="0"

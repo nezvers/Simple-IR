@@ -21,22 +21,28 @@ PluginAudioProcessor::PluginAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        )
-    , valueTreeState(*this, nullptr, "PARAMETERS", createParameterLayout())
+    //, valueTreeState(*this, nullptr, "PARAMETERS", createParameterLayout())
 #endif
 {
-    linkParameters();
-    currentFile1 = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
+    DBG("CONSTRUCTOR");
 
+    for (int i = 0; i < 3; i++) {
+        procGroup[i].setTreeStateReferences(&valueTreeState);
+    }
 
     variableTree = {
         Parameters::variableTreeName, {},{
             {
                 "Group", {{"name", "IR Vars"}},{
-                    {"Parameter",{{"id", Parameters::param_file1}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::param_file2}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::param_file1Directory}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::param_file2Directory}, {"value", "/"}}},
-                    {"Parameter",{{"id", Parameters::param_stereoMode}, {"value", Parameters::DUAL_MONO}}}
+                    {"Parameter",{{"id", procOut.param_file}, {"value", "/"}}},
+                    {"Parameter",{{"id", procOut.param_directory}, {"value", "/"}}},
+                    {"Parameter",{{"id", procOut.param_stereoMode}, {"value", Parameters::DUAL_MONO}}},
+                    {"Parameter",{{"id", procLeft.param_file}, {"value", "/"}}},
+                    {"Parameter",{{"id", procLeft.param_directory}, {"value", "/"}}},
+                    {"Parameter",{{"id", procLeft.param_stereoMode}, {"value", Parameters::DUAL_MONO}}},
+                    {"Parameter",{{"id", procRight.param_file}, {"value", "/"}}},
+                    {"Parameter",{{"id", procRight.param_directory}, {"value", "/"}}},
+                    {"Parameter",{{"id", procRight.param_stereoMode}, {"value", Parameters::DUAL_MONO}}}
                 }
             }
         }
@@ -46,47 +52,15 @@ PluginAudioProcessor::PluginAudioProcessor()
 //==============================================================================
 void PluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    DBG("prepareToPlay");
+
     mSpec.maximumBlockSize = samplesPerBlock;
     mSpec.sampleRate = sampleRate;
     mSpec.numChannels = getTotalNumOutputChannels();
 
-    gainOut.prepare(mSpec);
-    gainIR1.prepare(mSpec);
-    gainIR2.prepare(mSpec);
-
-    mixer.prepare(mSpec);
-    mixer.setWetMixProportion(0.0f);
-    mixer.setMixingRule(juce::dsp::DryWetMixingRule::linear);
-    panIR1.prepare(mSpec);
-    panIR1.setWetMixProportion(0.5f);
-    panIR1.setMixingRule(juce::dsp::DryWetMixingRule::squareRoot3dB);
-    panIR2.prepare(mSpec);
-    panIR2.setWetMixProportion(0.5f);
-    panIR2.setMixingRule(juce::dsp::DryWetMixingRule::squareRoot3dB);
-    
-    convolutionIR1.prepare(mSpec);
-    convolutionIR2.prepare(mSpec);
-
-    lowCutOut.sampleRate = sampleRate;
-    lowCutIR1.sampleRate = sampleRate;
-    lowCutIR2.sampleRate = sampleRate;
-    highCutOut.sampleRate = sampleRate;
-    highCutIR1.sampleRate = sampleRate;
-    highCutIR2.sampleRate = sampleRate;
-    lowCutOut.type = LowHighCutFilters::LOWCUT;
-    lowCutIR1.type = LowHighCutFilters::LOWCUT;
-    lowCutIR2.type = LowHighCutFilters::LOWCUT;
-    highCutOut.type = LowHighCutFilters::HIGHCUT;
-    highCutIR1.type = LowHighCutFilters::HIGHCUT;
-    highCutIR2.type = LowHighCutFilters::HIGHCUT;
-
-    DBG("PREPARE TO PLAY");
-    
-    double valueGain = valueTreeState.getRawParameterValue(Parameters::id_gainOut)->load();
-
-    gainOut.setRampDurationSeconds(0.01);
-    gainOut.setGainDecibels(valueGain);
-    // TODO: initialize after state set.
+    for (int i = 0; i < 3; i++) {
+        procGroup[i].setSpec(mSpec);
+    }
 }
 
 void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
@@ -95,6 +69,12 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     //auto totalNumInputChannels  = getTotalNumInputChannels();
     //auto totalNumOutputChannels = getTotalNumOutputChannels();
     
+    for (int i = 0; i < 3; i++) {
+        procGroup[i].updateParameters();
+    }
+
+    /*
+
     mBufferIR1.makeCopyOf(buffer, true);
     mBufferIR2.makeCopyOf(buffer, true);
 
@@ -119,6 +99,7 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
 
     buffer.makeCopyOf(mBufferIR1); // buffer from IR2
     
+    */
 }
 
 
@@ -126,6 +107,8 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
 //==============================================================================
 void PluginAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
+    DBG("getStateInformation - SAVE");
+
     valueTreeState.state.appendChild(variableTree, nullptr);
     
     auto state = valueTreeState.copyState();
@@ -135,6 +118,8 @@ void PluginAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 
 void PluginAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
+    DBG("setStateInformation - LOAD");
+
     std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
     if (xmlState.get() == nullptr) {
@@ -145,28 +130,22 @@ void PluginAudioProcessor::setStateInformation (const void* data, int sizeInByte
     }
 
     valueTreeState.replaceState(juce::ValueTree::fromXml(*xmlState));
+    
+
     juce::ValueTree newValueTree = valueTreeState.state.getChildWithName(Parameters::variableTreeName);
     
-    DBG("SET STATE");
     if (!newValueTree.isValid()) {
         return;
     }
 
     variableTree = valueTreeState.state.getChildWithName( Parameters::variableTreeName );
-    currentFile1 = juce::File( variableTree.getProperty( Parameters::param_file1 ) );
-    currentFile2 = juce::File( variableTree.getProperty( Parameters::param_file2 ) );
-    currentDirectory1 = juce::File( variableTree.getProperty( Parameters::param_file1Directory ) );
-    currentDirectory2 = juce::File( variableTree.getProperty( Parameters::param_file2Directory ) );
-    mStereoMode = (Parameters::enumStereo) int( variableTree.getProperty( Parameters::param_stereoMode ) );
-    
-    if (!currentFile1.existsAsFile()) {
+    if (!variableTree.isValid()) {
         return;
     }
 
-    convolutionIR1.loadImpulseResponse(currentFile1,
-        juce::dsp::Convolution::Stereo::yes,
-        juce::dsp::Convolution::Trim::yes,
-        0);
+    for (int i = 0; i < 3; i++) {
+        procGroup[i].setStateInformation(&variableTree);
+    }
 
     if (stateUpdate != nullptr) {
         stateUpdate();
@@ -176,113 +155,13 @@ void PluginAudioProcessor::setStateInformation (const void* data, int sizeInByte
 juce::AudioProcessorValueTreeState::ParameterLayout PluginAudioProcessor::createParameterLayout()
 {
     std::vector <std::unique_ptr<juce::RangedAudioParameter>> params;
-    //params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::parameterId, Parameters::parameterName, -24.0f, 24.0f, 0.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_mix, Parameters::name_mix, Parameters::panMin, Parameters::panMax, 0.0f) );
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_gainOut, Parameters::name_gainOut, Parameters::gainMin, Parameters::gainMax, 0.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_gainIR1, Parameters::name_gainIR1, Parameters::gainMin, Parameters::gainMax, 0.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_gainIR2, Parameters::name_gainIR2, Parameters::gainMin, Parameters::gainMax, 0.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_lowCutOut, Parameters::name_lowCutOut, Parameters::freqMin, Parameters::freqMax, Parameters::freqMin));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_lowCutIR1, Parameters::name_lowCutIR1, Parameters::freqMin, Parameters::freqMax, Parameters::freqMin));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_lowCutIR2, Parameters::name_lowCutIR2, Parameters::freqMin, Parameters::freqMax, Parameters::freqMin));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_hiCutOut, Parameters::name_hiCutOut, Parameters::freqMin, Parameters::freqMax, Parameters::freqMax));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_hiCutIR1, Parameters::name_hiCutIR1, Parameters::freqMin, Parameters::freqMax, Parameters::freqMax));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_hiCutIR2, Parameters::name_hiCutIR2, Parameters::freqMin, Parameters::freqMax, Parameters::freqMax));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_panIR1, Parameters::name_panIR1, Parameters::panMin, Parameters::panMax, 0.5f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_panIR2, Parameters::name_panIR2, Parameters::panMin, Parameters::panMax, 0.5f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_delayIR1, Parameters::name_delayIR1, Parameters::panMin, Parameters::panMax, 0.5f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_delayIR2, Parameters::name_delayIR2, Parameters::panMin, Parameters::panMax, 0.5f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_bypassOut, Parameters::name_bypassOut, Parameters::panMin, Parameters::panMax, 0.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_bypassIR1, Parameters::name_bypassIR1, Parameters::panMin, Parameters::panMax, 0.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_bypassIR2, Parameters::name_bypassIR2, Parameters::panMin, Parameters::panMax, 0.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_invertIR1, Parameters::name_invertIR1, Parameters::panMin, Parameters::panMax, 0.0f));
-    params.push_back(std::make_unique<juce::AudioParameterFloat>(Parameters::id_invertIR2, Parameters::name_invertIR2, Parameters::panMin, Parameters::panMax, 0.0f));
-
+    
+    for (int i = 0; i < 3; i++) {
+        procGroup[i].setParameterLayout(params);
+    }
 
     return { params.begin(), params.end() };
 }
-
-void PluginAudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
-{
-    // TODO: optimize checking
-    if (parameterID == Parameters::id_gainOut) {
-        DBG("GAIN CHANGED");
-        double valueGain = valueTreeState.getRawParameterValue(Parameters::id_gainOut)->load();
-        gainOut.setGainDecibels(valueGain);
-    }
-    if (parameterID == Parameters::id_mix) {
-        double convolutionMix = valueTreeState.getRawParameterValue(Parameters::id_mix)->load();
-        mixer.setWetMixProportion(convolutionMix);
-    }
-}
-
-void PluginAudioProcessor::setIR1(juce::File fileIr)
-{
-    currentFile1 = fileIr;
-    currentDirectory1 = fileIr.getParentDirectory().getFullPathName();
-
-    variableTree.setProperty(Parameters::param_file1, fileIr.getFullPathName(), nullptr);
-    variableTree.setProperty(Parameters::param_file1Directory, fileIr.getParentDirectory().getFullPathName(), nullptr);
-    convolutionIR1.loadImpulseResponse(currentFile1,
-        juce::dsp::Convolution::Stereo::yes,
-        juce::dsp::Convolution::Trim::yes,
-        0);
-    if (stateUpdate != nullptr && currentFile1.existsAsFile()) {
-        stateUpdate();
-    }
-}
-
-void PluginAudioProcessor::setIR2(juce::File fileIr)
-{
-    currentFile2 = fileIr;
-    currentDirectory2 = fileIr.getParentDirectory().getFullPathName();
-
-    variableTree.setProperty(Parameters::param_file2, fileIr.getFullPathName(), nullptr);
-    variableTree.setProperty(Parameters::param_file2Directory, fileIr.getParentDirectory().getFullPathName(), nullptr);
-    convolutionIR2.loadImpulseResponse(currentFile1,
-        juce::dsp::Convolution::Stereo::yes,
-        juce::dsp::Convolution::Trim::yes,
-        0);
-    if (stateUpdate != nullptr && currentFile1.existsAsFile()) {
-        stateUpdate();
-    }
-}
-
-void PluginAudioProcessor::linkParameters()
-{
-    mixValue = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    gainValueOut = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    gainValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    gainValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    bypassValueOut = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    bypassValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    bypassValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    invertValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    invertValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    lowCutValueOut = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    lowCutValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    lowCutValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    highCutValueOut = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    highCutValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    highCutValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    panValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    panValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    delayValueIR1 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-    delayValueIR2 = valueTreeState.getRawParameterValue(Parameters::id_gainOut);
-}
-
-void PluginAudioProcessor::updateParameters()
-{
-    mixer.setWetMixProportion(mixValue->load());
-    gainOut.setGainDecibels(gainValueOut->load());
-    gainIR1.setGainDecibels(gainValueIR1->load());
-    gainIR2.setGainDecibels(gainValueIR2->load());
-}
-
-void PluginAudioProcessor::setStereo(Parameters::enumStereo value)
-{
-    variableTree.setProperty(Parameters::param_stereoMode, value, nullptr);
-}
-
 
 
 #pragma region DEFAULT

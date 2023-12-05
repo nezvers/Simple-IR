@@ -11,12 +11,12 @@
 #include <JuceHeader.h>
 #include "Parameters/Globals.h"
 #include "Library/LowHighCutFilters.h"
+#include "Library/ProcessorGroup.h"
 
 //==============================================================================
 /**
 */
 class PluginAudioProcessor  : public juce::AudioProcessor
-    , public juce::AudioProcessorValueTreeState::Listener
 {
 public:
     //==============================================================================
@@ -56,66 +56,23 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    void parameterChanged(const juce::String& parameterID, float newValue) override;
-    
-    void setIR1(juce::File fileIr);
-    void setIR2(juce::File fileIr);
     // Sets stereo mode - mono, stereo, dual_mono
-    void setStereo(Parameters::enumStereo value);
     std::function<void()> stateUpdate;
 
 
-    juce::AudioProcessorValueTreeState valueTreeState;
+    ProcessorGroup procGroup[3] = { ProcessorGroup("1"), ProcessorGroup("2"), ProcessorGroup("3") };
+    juce::AudioProcessorValueTreeState valueTreeState{*this, nullptr, "PARAMETERS", createParameterLayout()};
     juce::ValueTree variableTree;
 
-    juce::File currentDirectory1, currentFile1;
-    juce::File currentDirectory2, currentFile2;
-
 private:
-    juce::dsp::DryWetMixer<float> mixer;
-    juce::dsp::DryWetMixer<float> panIR1;
-    juce::dsp::DryWetMixer<float> panIR2;
-    juce::dsp::Gain<float> gainOut;
-    juce::dsp::Gain<float> gainIR1;
-    juce::dsp::Gain<float> gainIR2;
-    juce::dsp::Convolution convolutionIR1;
-    juce::dsp::Convolution convolutionIR2;
-    LowHighCutFilters lowCutOut;
-    LowHighCutFilters lowCutIR1;
-    LowHighCutFilters lowCutIR2;
-    LowHighCutFilters highCutOut;
-    LowHighCutFilters highCutIR1;
-    LowHighCutFilters highCutIR2;
+    ProcessorGroup& procOut{ procGroup[0]};
+    ProcessorGroup& procLeft{ procGroup[1] };
+    ProcessorGroup& procRight{ procGroup[2] };
 
-
-    juce::AudioBuffer<float> mBufferIR1;
-    juce::AudioBuffer<float> mBufferIR2;
     juce::dsp::ProcessSpec mSpec;
-    Parameters::enumStereo mStereoMode;
 
-    std::atomic<float>* mixValue;
-    std::atomic<float>* gainValueOut;
-    std::atomic<float>* gainValueIR1;
-    std::atomic<float>* gainValueIR2;
-    std::atomic<float>* bypassValueOut;
-    std::atomic<float>* bypassValueIR1;
-    std::atomic<float>* bypassValueIR2;
-    std::atomic<float>* invertValueIR1;
-    std::atomic<float>* invertValueIR2;
-    std::atomic<float>* lowCutValueOut;
-    std::atomic<float>* lowCutValueIR1;
-    std::atomic<float>* lowCutValueIR2;
-    std::atomic<float>* highCutValueOut;
-    std::atomic<float>* highCutValueIR1;
-    std::atomic<float>* highCutValueIR2;
-    std::atomic<float>* panValueIR1;
-    std::atomic<float>* panValueIR2;
-    std::atomic<float>* delayValueIR1;
-    std::atomic<float>* delayValueIR2;
-
+    
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
-    void linkParameters();
-    void updateParameters();
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginAudioProcessor)
 };
