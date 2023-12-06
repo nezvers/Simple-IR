@@ -20,7 +20,7 @@ public:
     float filterFrequency;
     float sampleRate;
 
-    void process(juce::AudioBuffer<float>& audioBuffer, juce::MidiBuffer midiBuffer);
+    void process(juce::AudioBuffer<float>& audioBuffer);
 private:
     std::vector<float> dnBuffer;
 };

@@ -17,7 +17,8 @@
 class ProcessorGroup {
 public:
     ProcessorGroup(juce::String idSuffix) {
-
+        suffix = idSuffix;
+        DBG("_ProcessorGroup()" + suffix);
         param_file += idSuffix;
         param_directory += idSuffix;
         param_stereoMode += idSuffix;
@@ -32,6 +33,7 @@ public:
 
         
     };
+    juce::String suffix;
     // Parameter IDs
     juce::String param_file = "file";
     juce::String param_directory = "directory";
@@ -111,6 +113,7 @@ public:
 
     // Links atomic valiables
     void linkParameters(juce::AudioProcessorValueTreeState* vts) {
+        DBG("linkParameters()" + suffix);
         valueMix = vts->getRawParameterValue(id_mix);
         valueGain = vts->getRawParameterValue(id_gain);
         valueLowCut = vts->getRawParameterValue(id_lowCut);
@@ -123,7 +126,8 @@ public:
 
     // Generates ValueTreeState parameters
     void setParameterLayout(std::vector <std::unique_ptr<juce::RangedAudioParameter>>& params) {
-        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_mix, name_mix, Parameters::panMin, Parameters::panMax, 0.0f));
+        DBG("setParameterLayout()" + suffix);
+        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_mix, name_mix, Parameters::panMin, Parameters::panMax, 1.0f));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_gain, name_gain, Parameters::gainMin, Parameters::gainMax, 0.0f));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_lowCut, name_lowCut, Parameters::freqMin, Parameters::freqMax, Parameters::freqMin));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_highCut, name_highCut, Parameters::freqMin, Parameters::freqMax, Parameters::freqMax));
@@ -134,6 +138,7 @@ public:
     }
 
     void setTreeStateReferences(juce::AudioProcessorValueTreeState* vts) {
+        DBG("setTreeStateReferences()" + suffix);
         valueTreeState = vts;
 
         linkParameters(vts);
@@ -150,19 +155,24 @@ public:
     }
 
     void setStateInformation(juce::ValueTree* vt) {
+        DBG("setStateInformation()" + suffix);
         variableTree = vt;
-        file = juce::File(vt->getProperty(param_file));
-        directory = juce::File(vt->getProperty(param_directory));
-        stereoMode = (Parameters::enumStereo) int(vt->getProperty(Parameters::param_stereoMode));
-
-        if (!file.existsAsFile()) {
+        
+        /*
+        juce::File fileLoad = juce::File(vt->getProperty(param_file));
+        if (!fileLoad.existsAsFile()) {
             return;
         }
+        file = juce::File(vt->getProperty(param_file));
+        directory = juce::File(vt->getProperty(param_directory));
+        stereoMode = (Parameters::enumStereo) int(vt->getProperty(param_stereoMode));
+
 
         convolution.loadImpulseResponse(file,
             juce::dsp::Convolution::Stereo::yes,
             juce::dsp::Convolution::Trim::yes,
             0);
+        */
     }
 
     // Update DSP with atomic values
@@ -178,6 +188,8 @@ public:
     }
 
     void setFile(juce::File value) {
+        DBG("setFile()" + suffix);
+        if (!value.existsAsFile()) { return; }
         file = value;
         directory = value.getParentDirectory().getFullPathName();
         variableTree->setProperty(param_file, file.getFullPathName(), nullptr);
@@ -187,6 +199,45 @@ public:
             juce::dsp::Convolution::Stereo::yes,
             juce::dsp::Convolution::Trim::yes,
             0);
+    }
+
+    void process(
+        juce::dsp::ProcessContextReplacing<float> inputContext, 
+        juce::AudioBuffer<float> outputBuffer )
+    {
+        buffer.makeCopyOf(outputBuffer, true); // Copy dry buffer
+        juce::dsp::AudioBlock<float> audioBlock = { buffer };
+        juce::dsp::ProcessContextReplacing<float> context = juce::dsp::ProcessContextReplacing<float>(audioBlock);
+        
+        if (convolution.getCurrentIRSize() > 0) {
+            convolution.process(context);
+        }
+
+        mix.pushDrySamples(inputContext.getOutputBlock());
+        mix.mixWetSamples(audioBlock);
+        gain.process(context);
+        /*
+        filterLowCut.process(buffer);
+        filterHighCut.process(buffer);
+        // TODO: Pan
+        */
+    }
+
+    void process_combine(
+        juce::dsp::ProcessContextReplacing<float> contextLeft,
+        juce::dsp::ProcessContextReplacing<float> contextRight,
+        juce::AudioBuffer<float> bufferLeft,
+        juce::AudioBuffer<float> bufferRight )
+    {
+        buffer.makeCopyOf(bufferRight, true); // Copy dry buffer
+        juce::dsp::AudioBlock<float> audioBlock = { buffer };
+        juce::dsp::ProcessContextReplacing<float> context = juce::dsp::ProcessContextReplacing<float>(audioBlock);
+        /*
+        mix.pushDrySamples(contextLeft.getOutputBlock());
+        mix.mixWetSamples(context.getOutputBlock());
+        // TODO: Pan
+        gain.process(context);
+        */
     }
 
 };

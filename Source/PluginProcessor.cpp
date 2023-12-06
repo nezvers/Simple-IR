@@ -54,12 +54,12 @@ void PluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
 {
     DBG("prepareToPlay");
 
-    mSpec.maximumBlockSize = samplesPerBlock;
-    mSpec.sampleRate = sampleRate;
-    mSpec.numChannels = getTotalNumOutputChannels();
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.sampleRate = sampleRate;
+    spec.numChannels = getTotalNumOutputChannels();
 
     for (int i = 0; i < 3; i++) {
-        procGroup[i].setSpec(mSpec);
+        procGroup[i].setSpec(spec);
     }
 }
 
@@ -73,33 +73,24 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
         procGroup[i].updateParameters();
     }
 
-    /*
+    juce::dsp::AudioBlock<float> audioBlock = {buffer};
+    juce::dsp::ProcessContextReplacing<float> context = juce::dsp::ProcessContextReplacing<float>(audioBlock);
 
-    mBufferIR1.makeCopyOf(buffer, true);
-    mBufferIR2.makeCopyOf(buffer, true);
-
-    juce::dsp::AudioBlock<float> audioBlockIR1 {mBufferIR1};
-    juce::dsp::AudioBlock<float> audioBlockIR2 {mBufferIR2};
+    procLeft.process(context, buffer);
+    procRight.process(context, buffer);
+    juce::dsp::AudioBlock<float> audioBlockLeft = { procLeft.buffer };
+    juce::dsp::AudioBlock<float> audioBlockRight = { procRight.buffer };
+    juce::dsp::ProcessContextReplacing<float> contextLeft = juce::dsp::ProcessContextReplacing<float>(audioBlockLeft);
+    juce::dsp::ProcessContextReplacing<float> contextRight = juce::dsp::ProcessContextReplacing<float>(audioBlockRight);
     
+    procOut.process_combine(contextLeft, contextRight, procLeft.buffer, procRight.buffer);
+
+    DBG("frequency: " + juce::String(procLeft.filterHighCut.filterFrequency));
+
+
     
-    juce::dsp::ProcessContextReplacing contextConvolutionIR1 = juce::dsp::ProcessContextReplacing<float>(audioBlockIR1);
-    juce::dsp::ProcessContextReplacing contextConvolutionIR2 = juce::dsp::ProcessContextReplacing<float>(audioBlockIR2);
-
-    if (convolutionIR1.getCurrentIRSize() > 0) {
-        convolutionIR1.process(contextConvolutionIR1);
-    }
-    if (convolutionIR2.getCurrentIRSize() > 0) {
-        convolutionIR2.process(contextConvolutionIR2);
-    }
-
-    mixer.pushDrySamples(contextConvolutionIR1.getOutputBlock());
-    mixer.mixWetSamples(contextConvolutionIR2.getOutputBlock()); // mix into IR2 buffer
-
-    gainOut.process(contextConvolutionIR2);
-
-    buffer.makeCopyOf(mBufferIR1); // buffer from IR2
+    buffer.makeCopyOf(procOut.buffer);
     
-    */
 }
 
 

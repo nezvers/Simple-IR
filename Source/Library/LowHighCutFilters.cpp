@@ -10,12 +10,12 @@
 
 #include "LowHighCutFilters.h"
 
-void LowHighCutFilters::process(juce::AudioBuffer<float>& audioBuffer, juce::MidiBuffer midiBuffer)
+void LowHighCutFilters::process(juce::AudioBuffer<float>& audioBuffer)
 {
     constexpr float PI = 3.12159265359f;
     dnBuffer.resize(audioBuffer.getNumChannels(), 0.0f);
 
-    const float sign = (type == LOWCUT) ? -1.0f : 1.0f;
+    const float sign = (type == LOWCUT) ? 1.0f : -1.0f;
     const float tan = std::tan(PI * filterFrequency / sampleRate);
     const float a1 = (tan - 1.0f) / (tan + 1.0f);
     const int sampleCount = audioBuffer.getNumSamples();

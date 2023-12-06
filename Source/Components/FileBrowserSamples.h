@@ -42,10 +42,10 @@ public:
     void browserRootChanged(const File& newRoot) override {};
 
     std::function<void(juce::File)> onFileDoubleClick;
+    juce::FileBrowserComponent fileBrowser;
 
 private:
     juce::WildcardFileFilter fileFilter{ Parameters::fileSampleExtensions, "*", "Choose File" };
-    juce::FileBrowserComponent fileBrowser;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FileBrowserSamples)
 };

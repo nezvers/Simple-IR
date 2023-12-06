@@ -33,8 +33,15 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     */
 
     //addAndMakeVisible(sampleDrawer);
+    DBG("_PluginAudioProcessorEditor()");
+    //fileBrowserIR1.fileBrowser.setRoot(audioProcessor.procLeft.file);
+    //fileBrowserIR2.fileBrowser.setRoot(audioProcessor.procRight.file);
     addAndMakeVisible(fileBrowserIR1);
     addAndMakeVisible(fileBrowserIR2);
+    fileBrowserIR1.onFileDoubleClick = [this](juce::File file) 
+        {audioProcessor.procLeft.setFile(file); };
+    fileBrowserIR2.onFileDoubleClick = [this](juce::File file)
+    {audioProcessor.procRight.setFile(file); };
 
 
     setSize (400, 300);

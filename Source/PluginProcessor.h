@@ -63,13 +63,13 @@ public:
     ProcessorGroup procGroup[3] = { ProcessorGroup("1"), ProcessorGroup("2"), ProcessorGroup("3") };
     juce::AudioProcessorValueTreeState valueTreeState{*this, nullptr, "PARAMETERS", createParameterLayout()};
     juce::ValueTree variableTree;
-
-private:
     ProcessorGroup& procOut{ procGroup[0]};
     ProcessorGroup& procLeft{ procGroup[1] };
     ProcessorGroup& procRight{ procGroup[2] };
 
-    juce::dsp::ProcessSpec mSpec;
+    juce::dsp::ProcessSpec spec;
+private:
+
 
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
