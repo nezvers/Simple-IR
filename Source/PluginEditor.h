@@ -35,6 +35,7 @@ private:
     FileBrowserSamples fileBrowserIR1;
     FileBrowserSamples fileBrowserIR2;
 
+    void init_sliders();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginAudioProcessorEditor)
 };
