@@ -66,24 +66,6 @@ void PluginAudioProcessorEditor::resized()
 
 void PluginAudioProcessorEditor::init_sliders()
 {
-    /*
-    // --- Slider input gain ---
-    sliderOutputGain.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    sliderOutputGain.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 72, 32);
-    sliderOutputGain.setSkewFactor(2.0, false);
-    sliderOutputGain.setRange(Parameters::gainMin, Parameters::gainMax, 0.01);
-    sliderOutputGain.setDoubleClickReturnValue(true, 0.0, juce::ModifierKeys::ctrlModifier);
-    sliderOutputGain.setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::whitesmoke.withAlpha(0.25f));
-    sliderOutputGain.setTextValueSuffix("dB");
-    addAndMakeVisible(sliderOutputGain);
-
-    sliderMix.setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-    sliderMix.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 72, 32);
-    sliderMix.setRange(Parameters::panMin, Parameters::panMax, 0.01);
-    sliderMix.setDoubleClickReturnValue(true, 0.5, juce::ModifierKeys::ctrlModifier);
-    addAndMakeVisible(sliderMix);
-    */
-
     ProcessorGroup* proc_list[] = { &audioProcessor.procLeft, &audioProcessor.procRight };
     for each (ProcessorGroup * proc in proc_list)
     {
@@ -119,6 +101,16 @@ void PluginAudioProcessorEditor::init_sliders()
             Parameters::panMax,
             Parameters::delayMax
         };
+
+        const float skewList[] = {
+            1.0f,
+            2.0f,
+            10.0f,
+            10.0f,
+            1.0f,
+            0.5f
+        };
+
         const float returnList[] = {
             0.5f,
             0.0f,
@@ -142,7 +134,7 @@ void PluginAudioProcessorEditor::init_sliders()
             slider.setName(nameList[i]);
             slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
             slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 72, 32);
-            slider.setSkewFactor(2.0, false);
+            slider.setSkewFactor(skewList[i], false);
             slider.setRange(minList[i], maxList[i], 0.01);
             slider.setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::whitesmoke.withAlpha(0.25f));
             slider.setDoubleClickReturnValue(true, returnList[i], juce::ModifierKeys::ctrlModifier);
