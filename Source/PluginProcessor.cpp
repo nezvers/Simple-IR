@@ -264,6 +264,7 @@ bool PluginAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* PluginAudioProcessor::createEditor()
 {
+    DBG("_createEditor()");
     return new PluginAudioProcessorEditor(*this);
 }
 

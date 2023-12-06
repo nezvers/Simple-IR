@@ -11,7 +11,6 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "../Parameters/Globals.h"
 
 class FileBrowserSamples : public juce::Component, public juce::FileBrowserListener
 {
@@ -34,6 +33,18 @@ public:
         }
     };
 
+    void setSelectedFile(juce::File file, juce::File directory) {
+        if (!file.existsAsFile()) {
+            return;
+        }
+        fileBrowser.setRoot(directory);
+
+        juce::String extension = file.getFileExtension();
+        if (extension != ".wav" && extension != ".aiff") { return; }
+
+        fileBrowser.setFileName(file.getFileName());
+    };
+
     void resized() override { fileBrowser.setBounds(getLocalBounds()); };
 
     void paint(juce::Graphics&) override {};
@@ -42,10 +53,10 @@ public:
     void browserRootChanged(const File& newRoot) override {};
 
     std::function<void(juce::File)> onFileDoubleClick;
+    juce::WildcardFileFilter fileFilter = juce::WildcardFileFilter("*.wav;*.aiff", "", "Choose File" );
     juce::FileBrowserComponent fileBrowser;
 
 private:
-    juce::WildcardFileFilter fileFilter{ Parameters::fileSampleExtensions, "*", "Choose File" };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(FileBrowserSamples)
 };

@@ -34,8 +34,8 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
 
     //addAndMakeVisible(sampleDrawer);
     DBG("_PluginAudioProcessorEditor()");
-    //fileBrowserIR1.fileBrowser.setRoot(audioProcessor.procLeft.file);
-    //fileBrowserIR2.fileBrowser.setRoot(audioProcessor.procRight.file);
+    fileBrowserIR1.setSelectedFile(audioProcessor.procLeft.file, audioProcessor.procLeft.directory);
+    fileBrowserIR2.setSelectedFile(audioProcessor.procRight.file, audioProcessor.procRight.directory);
     addAndMakeVisible(fileBrowserIR1);
     addAndMakeVisible(fileBrowserIR2);
     fileBrowserIR1.onFileDoubleClick = [this](juce::File file) 
@@ -57,6 +57,7 @@ PluginAudioProcessorEditor::~PluginAudioProcessorEditor()
 //==============================================================================
 void PluginAudioProcessorEditor::paint (juce::Graphics& g)
 {
+    
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
     //g.fillAll(juce::Colour::fromRGB(0.1f, 0.1f, 0.1f));
