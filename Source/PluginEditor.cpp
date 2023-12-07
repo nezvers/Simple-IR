@@ -15,7 +15,7 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
     init_sliders();
-    
+    init_buttons();
 
 
     //addAndMakeVisible(sampleDrawer);
@@ -50,13 +50,23 @@ PluginAudioProcessorEditor::~PluginAudioProcessorEditor()
                 &proc->sliderPan,
                 &proc->sliderDelay
         };
-        enum { MIX, GAIN, LOWCUT, HIGHCUT, PAN, DELAY, COUNT };
-        for (int i = 0; i < COUNT; i++) {
+        for (int i = 0; i < 6; i++) {
             juce::Slider& slider = *sliderList[i];
             slider.setLookAndFeel(nullptr);
         }
+
+        juce::Button* buttonList[] = {
+                &proc->buttonBypass,
+                &proc->buttonInvert,
+                &proc->buttonStereoMode
+        };
+        for (int i = 0; i < 3; i++) {
+            juce::Button& button = *buttonList[i];
+            button.setLookAndFeel(nullptr);
+            addAndMakeVisible(button);
+        }
     }
-    delete slickLookAndFeel;
+    delete lookAndFeel;
 }
 
 //==============================================================================
@@ -89,34 +99,53 @@ void PluginAudioProcessorEditor::resized()
     int kx_1 = width * ((0.0f) * 0.1f);
     int ky = height * ((0.2f) * 0.1f);
     int kw = width * ((1.1f) * 0.1f);
-    int kh = height * ((1.5f) * 0.1f);
     int kx_2 = middle - kw / 2;
     int ky_2 = height * ((8.5f) * 0.1f);
+    int ftr = height * ((0.5f) * 0.1f);
+    int btm = height * ((1.0f) * 0.1f);
+
+    auto localBounds = getLocalBounds();
+    auto footerBounds = localBounds.removeFromBottom(ftr);
+    auto bottomBounds = localBounds.removeFromBottom(btm);
+    auto leftKnobBounds = localBounds.removeFromLeft(kw);
+    auto rightKnobBounds = localBounds.removeFromRight(kw);
+    auto leftFileBounds = localBounds.removeFromLeft((localBounds.getWidth() - kw) / 2);
+    auto rightFileBounds = localBounds.removeFromRight((localBounds.getWidth() - kw));
+    auto centerKnobBounds = localBounds;
+
 
 
     DBG(juce::String(middle) + ", " + juce::String(height));
 
-    int fileBrowserWidth = juce::jmax(fw - fm, 82);
-    fileBrowserIR1.setBounds(fx, fy, fileBrowserWidth, fh);
-    fileBrowserIR2.setBounds(middle + fm, fy, fileBrowserWidth, fh);
+    leftFileBounds.setWidth(juce::jmax(leftFileBounds.getWidth(), 82));
+    rightFileBounds.setWidth(juce::jmax(leftFileBounds.getWidth(), 82));
+    fileBrowserIR1.setBounds(leftFileBounds);
+    fileBrowserIR2.setBounds(rightFileBounds);
 
-    audioProcessor.procLeft.sliderGain.setBounds(kx_1, ky, kw, kh);
-    audioProcessor.procRight.sliderGain.setBounds(width - kx_1 - kw, ky, kw, kh);
+    int kh = leftKnobBounds.getHeight() / 4.3f;
+    int btw = leftKnobBounds.getWidth() / 2;
+    audioProcessor.procLeft.sliderGain.setBounds(leftKnobBounds.removeFromTop(kh));
+    audioProcessor.procLeft.sliderMix.setBounds(leftKnobBounds.removeFromTop(kh));
+    audioProcessor.procLeft.sliderLowCut.setBounds(leftKnobBounds.removeFromTop(kh));
+    audioProcessor.procLeft.sliderHighCut.setBounds(leftKnobBounds.removeFromTop(kh));
+    audioProcessor.procLeft.buttonBypass.setBounds(leftKnobBounds.removeFromLeft(btw));
+    audioProcessor.procLeft.buttonInvert.setBounds(leftKnobBounds);
 
-    audioProcessor.procLeft.sliderMix.setBounds(kx_1, ky + kh, kw, kh);
-    audioProcessor.procRight.sliderMix.setBounds(width - kx_1 - kw, ky + kh, kw, kh);
+    audioProcessor.procRight.sliderGain.setBounds(rightKnobBounds.removeFromTop(kh));
+    audioProcessor.procRight.sliderMix.setBounds(rightKnobBounds.removeFromTop(kh));
+    audioProcessor.procRight.sliderLowCut.setBounds(rightKnobBounds.removeFromTop(kh));
+    audioProcessor.procRight.sliderHighCut.setBounds(rightKnobBounds.removeFromTop(kh));
+    audioProcessor.procRight.buttonBypass.setBounds(rightKnobBounds.removeFromLeft(btw));
+    audioProcessor.procRight.buttonInvert.setBounds(rightKnobBounds);
 
-    audioProcessor.procLeft.sliderLowCut.setBounds(kx_1, ky + kh * 2, kw, kh);
-    audioProcessor.procRight.sliderLowCut.setBounds(width - kx_1 - kw, ky + kh * 2, kw, kh);
+    audioProcessor.procOut.sliderGain.setBounds(centerKnobBounds.removeFromTop(kh));
+    audioProcessor.procOut.sliderMix.setBounds(centerKnobBounds.removeFromTop(kh));
+    audioProcessor.procOut.sliderLowCut.setBounds(centerKnobBounds.removeFromTop(kh));
+    audioProcessor.procOut.sliderHighCut.setBounds(centerKnobBounds.removeFromTop(kh));
 
-    audioProcessor.procLeft.sliderHighCut.setBounds(kx_1, ky + kh * 3, kw, kh);
-    audioProcessor.procRight.sliderHighCut.setBounds(width - kx_1 - kw, ky + kh * 3, kw, kh);
+    int btm_w = bottomBounds.getWidth() / 4;
 
-    audioProcessor.procOut.sliderGain.setBounds(kx_2, ky + kh * 0, kw, kh);
-    audioProcessor.procOut.sliderMix.setBounds(kx_2, ky + kh * 1, kw, kh);
 
-    audioProcessor.procOut.sliderLowCut.setBounds(kx_2, ky + kh * 2, kw, kh);
-    audioProcessor.procOut.sliderHighCut.setBounds(kx_2, ky + kh * 3, kw, kh);
 
 }
 
@@ -187,7 +216,7 @@ void PluginAudioProcessorEditor::init_sliders()
         enum {MIX, GAIN, LOWCUT, HIGHCUT, PAN, DELAY, COUNT};
         for (int i = 0; i < COUNT; i++) {
             juce::Slider& slider = *sliderList[i];
-            slider.setLookAndFeel(slickLookAndFeel);
+            slider.setLookAndFeel(lookAndFeel);
             slider.setName(nameList[i]);
             slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
             slider.setTextBoxStyle(juce::Slider::NoTextBox, false, 72, 32);
@@ -198,6 +227,34 @@ void PluginAudioProcessorEditor::init_sliders()
             slider.setTextValueSuffix(suffixList[i]);
             addAndMakeVisible(slider);
         }
+    }
+}
+
+void PluginAudioProcessorEditor::init_buttons()
+{
+    ProcessorGroup* proc_list[] = { &audioProcessor.procLeft, &audioProcessor.procRight, &audioProcessor.procOut };
+    for each (ProcessorGroup * proc in proc_list)
+    {
+        juce::TextButton* buttonList[] = {
+                &proc->buttonBypass,
+                & proc->buttonInvert,
+                &proc->buttonStereoMode
+        };
+
+        const juce::String textList[] = {
+            "Solo",
+            "Phase Invert",
+            "Stereo Mode"
+        };
+
+        enum {BYPASS, INVERT, STEREOMODE, COUNT};
+        for (int i = 0; i < COUNT; i++) {
+            juce::TextButton& button = *buttonList[i];
+            button.setLookAndFeel(lookAndFeel);
+            button.setButtonText(textList[i]);
+            addAndMakeVisible(button);
+        }
+
     }
 }
 

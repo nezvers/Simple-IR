@@ -67,15 +67,15 @@ public:
     std::atomic<float>* valueInvert = nullptr;
 #pragma endregion
 #pragma region Components
-    juce::ImageButton buttonStereoMode;
     juce::Slider sliderMix;//
     juce::Slider sliderGain;
     juce::Slider sliderLowCut;
     juce::Slider sliderHighCut;
     juce::Slider sliderPan;
     juce::Slider sliderDelay;
-    juce::ImageButton buttonBypass;
-    juce::ImageButton buttonInvert;
+    juce::TextButton buttonBypass;
+    juce::TextButton buttonInvert;
+    juce::TextButton buttonStereoMode;
 #pragma endregion
 #pragma region Attachments
     using nSliderAttachment = std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>;

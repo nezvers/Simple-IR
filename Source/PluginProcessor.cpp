@@ -85,10 +85,6 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     
     procOut.process_combine(contextLeft, contextRight, procLeft.buffer, procRight.buffer);
 
-    DBG("frequency: " + juce::String(procLeft.filterHighCut.filterFrequency));
-
-
-    
     buffer.makeCopyOf(procOut.buffer);
     
 }

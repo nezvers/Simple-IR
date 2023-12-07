@@ -35,9 +35,10 @@ private:
     
     FileBrowserSamples fileBrowserIR1;
     FileBrowserSamples fileBrowserIR2;
-    SlickLookAndFeel* slickLookAndFeel = new SlickLookAndFeel();
 
+    SlickLookAndFeel* lookAndFeel = new SlickLookAndFeel();
     void init_sliders();
+    void init_buttons();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginAudioProcessorEditor)
 };
