@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 #include "Components/SampleDrawer.h"
 #include "Components/FileBrowserSamples.h"
+#include "Library/CustomLookAndFeel.h"
 
 //==============================================================================
 /**
@@ -34,6 +35,7 @@ private:
     
     FileBrowserSamples fileBrowserIR1;
     FileBrowserSamples fileBrowserIR2;
+    SlickLookAndFeel* slickLookAndFeel = new SlickLookAndFeel();
 
     void init_sliders();
 

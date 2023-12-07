@@ -36,13 +36,13 @@ PluginAudioProcessor::PluginAudioProcessor()
                 "Group", {{"name", "IR Vars"}},{
                     {"Parameter",{{"id", procOut.param_file}, {"value", "/"}}},
                     {"Parameter",{{"id", procOut.param_directory}, {"value", "/"}}},
-                    {"Parameter",{{"id", procOut.param_stereoMode}, {"value", Parameters::DUAL_MONO}}},
+                    {"Parameter",{{"id", procOut.param_stereoMode}, {"value", (int)Parameters::DUAL_MONO}}},
                     {"Parameter",{{"id", procLeft.param_file}, {"value", "/"}}},
                     {"Parameter",{{"id", procLeft.param_directory}, {"value", "/"}}},
-                    {"Parameter",{{"id", procLeft.param_stereoMode}, {"value", Parameters::DUAL_MONO}}},
+                    {"Parameter",{{"id", procLeft.param_stereoMode}, {"value", (int)Parameters::DUAL_MONO}}},
                     {"Parameter",{{"id", procRight.param_file}, {"value", "/"}}},
                     {"Parameter",{{"id", procRight.param_directory}, {"value", "/"}}},
-                    {"Parameter",{{"id", procRight.param_stereoMode}, {"value", Parameters::DUAL_MONO}}}
+                    {"Parameter",{{"id", procRight.param_stereoMode}, {"value", (int)Parameters::DUAL_MONO}}}
                 }
             }
         }

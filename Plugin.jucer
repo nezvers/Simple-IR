@@ -10,6 +10,8 @@
         <FILE id="gogWPy" name="Globals.h" compile="0" resource="0" file="Source/Parameters/Globals.h"/>
       </GROUP>
       <GROUP id="{8481574B-BF31-ED90-63F8-631E812630D4}" name="Library">
+        <FILE id="umyzY8" name="CustomLookAndFeel.h" compile="0" resource="0"
+              file="Source/Library/CustomLookAndFeel.h"/>
         <FILE id="c1JkJo" name="FileLoader.h" compile="0" resource="0" file="Source/Library/FileLoader.h"/>
         <FILE id="cZYg5q" name="LowHighCutFilters.cpp" compile="1" resource="0"
               file="Source/Library/LowHighCutFilters.cpp"/>

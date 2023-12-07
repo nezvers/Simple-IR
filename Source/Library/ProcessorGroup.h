@@ -246,11 +246,12 @@ public:
         juce::dsp::ProcessContextReplacing<float> context = juce::dsp::ProcessContextReplacing<float>(audioBlock);
         mix.pushDrySamples(contextLeft.getOutputBlock());
         mix.mixWetSamples(context.getOutputBlock());
+        gain.process(context);
+
         /*
         // TODO: Pan
         filterLowCut.process(buffer);
         filterHighCut.process(buffer);
-        gain.process(context);
         */
     }
 

@@ -38,6 +38,25 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
 
 PluginAudioProcessorEditor::~PluginAudioProcessorEditor()
 {
+    ProcessorGroup* proc_list[] = { &audioProcessor.procLeft, &audioProcessor.procRight, &audioProcessor.procOut };
+
+    for each (ProcessorGroup * proc in proc_list)
+    {
+        juce::Slider* sliderList[] = {
+                &proc->sliderMix,
+                &proc->sliderGain,
+                &proc->sliderLowCut,
+                &proc->sliderHighCut,
+                &proc->sliderPan,
+                &proc->sliderDelay
+        };
+        enum { MIX, GAIN, LOWCUT, HIGHCUT, PAN, DELAY, COUNT };
+        for (int i = 0; i < COUNT; i++) {
+            juce::Slider& slider = *sliderList[i];
+            slider.setLookAndFeel(nullptr);
+        }
+    }
+    delete slickLookAndFeel;
 }
 
 //==============================================================================
@@ -48,8 +67,8 @@ void PluginAudioProcessorEditor::paint (juce::Graphics& g)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
     //g.fillAll(juce::Colour::fromRGB(0.1f, 0.1f, 0.1f));
     g.setColour (juce::Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("Simple IR", getLocalBounds(), juce::Justification::centredTop, 1.0f);
+    //g.setFont (15.0f);
+    //g.drawFittedText ("Simple IR", getLocalBounds(), juce::Justification::centredTop, 1.0f);
 }
 
 void PluginAudioProcessorEditor::resized()
@@ -57,16 +76,53 @@ void PluginAudioProcessorEditor::resized()
     int width = getWidth();
     int height = getHeight();
     int middle = width * 0.5;
+    
+    int y_2 = height * ((5.0f) * 0.1f);
+    int h_1 = height * ((2.0f) * 0.1f);
+
+    int fx = width * ((1.0f) * 0.1f);
+    int fy = height * ((0.25f) * 0.1f);
+    int fw = width * ((4.0f) * 0.1f);
+    int fm = width * ((0.5f) * 0.1f);
+    int fh = height * ((8.0f) * 0.1f);
+
+    int kx_1 = width * ((0.0f) * 0.1f);
+    int ky = height * ((0.2f) * 0.1f);
+    int kw = width * ((1.1f) * 0.1f);
+    int kh = height * ((1.5f) * 0.1f);
+    int kx_2 = middle - kw / 2;
+    int ky_2 = height * ((8.5f) * 0.1f);
+
+
     DBG(juce::String(middle) + ", " + juce::String(height));
 
-    int fileBrowserWidth = juce::jmax(middle, 82);
-    fileBrowserIR1.setBounds(0, 0, fileBrowserWidth, height);
-    fileBrowserIR2.setBounds(middle,0, fileBrowserWidth, height);
+    int fileBrowserWidth = juce::jmax(fw - fm, 82);
+    fileBrowserIR1.setBounds(fx, fy, fileBrowserWidth, fh);
+    fileBrowserIR2.setBounds(middle + fm, fy, fileBrowserWidth, fh);
+
+    audioProcessor.procLeft.sliderGain.setBounds(kx_1, ky, kw, kh);
+    audioProcessor.procRight.sliderGain.setBounds(width - kx_1 - kw, ky, kw, kh);
+
+    audioProcessor.procLeft.sliderMix.setBounds(kx_1, ky + kh, kw, kh);
+    audioProcessor.procRight.sliderMix.setBounds(width - kx_1 - kw, ky + kh, kw, kh);
+
+    audioProcessor.procLeft.sliderLowCut.setBounds(kx_1, ky + kh * 2, kw, kh);
+    audioProcessor.procRight.sliderLowCut.setBounds(width - kx_1 - kw, ky + kh * 2, kw, kh);
+
+    audioProcessor.procLeft.sliderHighCut.setBounds(kx_1, ky + kh * 3, kw, kh);
+    audioProcessor.procRight.sliderHighCut.setBounds(width - kx_1 - kw, ky + kh * 3, kw, kh);
+
+    audioProcessor.procOut.sliderGain.setBounds(kx_2, ky + kh * 0, kw, kh);
+    audioProcessor.procOut.sliderMix.setBounds(kx_2, ky + kh * 1, kw, kh);
+
+    audioProcessor.procOut.sliderLowCut.setBounds(kx_2, ky + kh * 2, kw, kh);
+    audioProcessor.procOut.sliderHighCut.setBounds(kx_2, ky + kh * 3, kw, kh);
+
 }
 
 void PluginAudioProcessorEditor::init_sliders()
 {
-    ProcessorGroup* proc_list[] = { &audioProcessor.procLeft, &audioProcessor.procRight };
+    ProcessorGroup* proc_list[] = { &audioProcessor.procLeft, &audioProcessor.procRight, &audioProcessor.procOut };
     for each (ProcessorGroup * proc in proc_list)
     {
         juce::Slider* sliderList[] = {
@@ -112,7 +168,7 @@ void PluginAudioProcessorEditor::init_sliders()
         };
 
         const float returnList[] = {
-            0.5f,
+            1.0f,
             0.0f,
             20.0f,
             20000.0f,
@@ -131,9 +187,10 @@ void PluginAudioProcessorEditor::init_sliders()
         enum {MIX, GAIN, LOWCUT, HIGHCUT, PAN, DELAY, COUNT};
         for (int i = 0; i < COUNT; i++) {
             juce::Slider& slider = *sliderList[i];
+            slider.setLookAndFeel(slickLookAndFeel);
             slider.setName(nameList[i]);
             slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-            slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 72, 32);
+            slider.setTextBoxStyle(juce::Slider::NoTextBox, false, 72, 32);
             slider.setSkewFactor(skewList[i], false);
             slider.setRange(minList[i], maxList[i], 0.01);
             slider.setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::whitesmoke.withAlpha(0.25f));
