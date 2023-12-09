@@ -56,9 +56,6 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    // Sets stereo mode - mono, stereo, dual_mono
-    std::function<void()> stateUpdate;
-
 
     ProcessorGroup procGroup[3] = { ProcessorGroup("1"), ProcessorGroup("2"), ProcessorGroup("3") };
     juce::AudioProcessorValueTreeState valueTreeState{*this, nullptr, "PARAMETERS", createParameterLayout()};

@@ -36,13 +36,10 @@ PluginAudioProcessor::PluginAudioProcessor()
                 "Group", {{"name", "IR Vars"}},{
                     {"Parameter",{{"id", procOut.param_file}, {"value", "/"}}},
                     {"Parameter",{{"id", procOut.param_directory}, {"value", "/"}}},
-                    {"Parameter",{{"id", procOut.param_stereoMode}, {"value", (int)Parameters::DUAL_MONO}}},
                     {"Parameter",{{"id", procLeft.param_file}, {"value", "/"}}},
                     {"Parameter",{{"id", procLeft.param_directory}, {"value", "/"}}},
-                    {"Parameter",{{"id", procLeft.param_stereoMode}, {"value", (int)Parameters::DUAL_MONO}}},
                     {"Parameter",{{"id", procRight.param_file}, {"value", "/"}}},
-                    {"Parameter",{{"id", procRight.param_directory}, {"value", "/"}}},
-                    {"Parameter",{{"id", procRight.param_stereoMode}, {"value", (int)Parameters::DUAL_MONO}}}
+                    {"Parameter",{{"id", procRight.param_directory}, {"value", "/"}}}
                 }
             }
         }
@@ -134,9 +131,6 @@ void PluginAudioProcessor::setStateInformation (const void* data, int sizeInByte
         procGroup[i].setStateInformation(&variableTree);
     }
 
-    if (stateUpdate != nullptr) {
-        stateUpdate();
-    }
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout PluginAudioProcessor::createParameterLayout()

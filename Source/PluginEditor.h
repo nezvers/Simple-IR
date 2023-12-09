@@ -36,9 +36,15 @@ private:
     FileBrowserSamples fileBrowserIR1;
     FileBrowserSamples fileBrowserIR2;
 
-    SlickLookAndFeel* lookAndFeel = new SlickLookAndFeel();
-    void init_sliders();
-    void init_buttons();
+
+    juce::Rectangle<int> localBounds;
+    juce::Rectangle<int> footerBounds;
+    //juce::Rectangle<int> bottomBounds;
+    juce::Rectangle<int> leftKnobBounds;
+    juce::Rectangle<int> rightKnobBounds;
+    juce::Rectangle<int> leftFileBounds;
+    juce::Rectangle<int> rightFileBounds;
+    juce::Rectangle<int> centerKnobBounds;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (PluginAudioProcessorEditor)
 };

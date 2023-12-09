@@ -14,10 +14,6 @@
 PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    init_sliders();
-    init_buttons();
-
-
     //addAndMakeVisible(sampleDrawer);
     DBG("_PluginAudioProcessorEditor()");
     fileBrowserIR1.setSelectedFile(audioProcessor.procLeft.file, audioProcessor.procLeft.directory);
@@ -29,44 +25,16 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     fileBrowserIR2.onFileDoubleClick = [this](juce::File file)
     {audioProcessor.procRight.setFile(file); };
 
-
-    setSize (400, 300);
-    setResizable(true, true);
-    setResizeLimits(100, 100, 9999, 9999);
-    //getConstrainer()->setFixedAspectRatio(2.0);
+    float height = 545.f;
+    setSize (840, int(height));
+    setResizable(true, false);
+    //setResizeLimits(100, 100, 9999, 9999);
+    getConstrainer()->setFixedAspectRatio(840.f / height);
 }
 
 PluginAudioProcessorEditor::~PluginAudioProcessorEditor()
 {
-    ProcessorGroup* proc_list[] = { &audioProcessor.procLeft, &audioProcessor.procRight, &audioProcessor.procOut };
-
-    for each (ProcessorGroup * proc in proc_list)
-    {
-        juce::Slider* sliderList[] = {
-                &proc->sliderMix,
-                &proc->sliderGain,
-                &proc->sliderLowCut,
-                &proc->sliderHighCut,
-                &proc->sliderPan,
-                &proc->sliderDelay
-        };
-        for (int i = 0; i < 6; i++) {
-            juce::Slider& slider = *sliderList[i];
-            slider.setLookAndFeel(nullptr);
-        }
-
-        juce::Button* buttonList[] = {
-                &proc->buttonBypass,
-                &proc->buttonInvert,
-                &proc->buttonStereoMode
-        };
-        for (int i = 0; i < 3; i++) {
-            juce::Button& button = *buttonList[i];
-            button.setLookAndFeel(nullptr);
-            addAndMakeVisible(button);
-        }
-    }
-    delete lookAndFeel;
+    
 }
 
 //==============================================================================
@@ -76,9 +44,27 @@ void PluginAudioProcessorEditor::paint (juce::Graphics& g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
     //g.fillAll(juce::Colour::fromRGB(0.1f, 0.1f, 0.1f));
-    g.setColour (juce::Colours::white);
+    //g.setColour (juce::Colours::white);
     //g.setFont (15.0f);
     //g.drawFittedText ("Simple IR", getLocalBounds(), juce::Justification::centredTop, 1.0f);
+    float g1 = 0.1f;
+    float g2 = 0.2f;
+    float g3 = 0.3f;
+    float g4 = 0.4f;
+    g.setColour(juce::Colour::fromFloatRGBA(g3, g3, g3, 1.0f));
+    g.fillRect(leftKnobBounds.getX(), leftKnobBounds.getY(), leftKnobBounds.getWidth(), leftKnobBounds.getHeight());
+    g.fillRect(rightKnobBounds.getX(), rightKnobBounds.getY(), rightKnobBounds.getWidth(), rightKnobBounds.getHeight());
+    g.fillRect(centerKnobBounds.getX(), centerKnobBounds.getY(), centerKnobBounds.getWidth(), centerKnobBounds.getHeight());
+
+    g.setColour(juce::Colour::fromFloatRGBA(g2, g2, g2, 1.0f));
+    g.fillRect(leftFileBounds.getX(), leftFileBounds.getY(), leftFileBounds.getWidth(), leftFileBounds.getHeight());
+    g.fillRect(rightFileBounds.getX(), rightFileBounds.getY(), rightFileBounds.getWidth(), rightFileBounds.getHeight());
+
+    //g.setColour(juce::Colour::fromFloatRGBA(g4, g4, g4, 1.0f));
+    //g.fillRect(bottomBounds.getX(), bottomBounds.getY(), bottomBounds.getWidth(), bottomBounds.getHeight());
+
+    g.setColour(juce::Colour::fromFloatRGBA(g1, g1, g1, 1.0f));
+    g.fillRect(footerBounds.getX(), footerBounds.getY(), footerBounds.getWidth(), footerBounds.getHeight());
 }
 
 void PluginAudioProcessorEditor::resized()
@@ -86,6 +72,7 @@ void PluginAudioProcessorEditor::resized()
     int width = getWidth();
     int height = getHeight();
     int middle = width * 0.5;
+    DBG(juce::String(width) + ", " + juce::String(height));// +" - aspect: " + juce::String(float(width) / float(height)));
     
     int y_2 = height * ((5.0f) * 0.1f);
     int h_1 = height * ((2.0f) * 0.1f);
@@ -101,161 +88,72 @@ void PluginAudioProcessorEditor::resized()
     int kw = width * ((1.1f) * 0.1f);
     int kx_2 = middle - kw / 2;
     int ky_2 = height * ((8.5f) * 0.1f);
-    int ftr = height * ((0.5f) * 0.1f);
+    int ftr = height * ((0.84f) * 0.1f);
     int btm = height * ((1.0f) * 0.1f);
 
-    auto localBounds = getLocalBounds();
-    auto footerBounds = localBounds.removeFromBottom(ftr);
-    auto bottomBounds = localBounds.removeFromBottom(btm);
-    auto leftKnobBounds = localBounds.removeFromLeft(kw);
-    auto rightKnobBounds = localBounds.removeFromRight(kw);
-    auto leftFileBounds = localBounds.removeFromLeft((localBounds.getWidth() - kw) / 2);
-    auto rightFileBounds = localBounds.removeFromRight((localBounds.getWidth() - kw));
-    auto centerKnobBounds = localBounds;
+    localBounds = getLocalBounds();
+    auto lb = localBounds;
+    footerBounds = lb.removeFromBottom(ftr);
+    //bottomBounds = lb.removeFromBottom(btm);
+    leftKnobBounds = lb.removeFromLeft(kw);
+    rightKnobBounds = lb.removeFromRight(kw);
+    leftFileBounds = lb.removeFromLeft((lb.getWidth() - kw) / 2);
+    rightFileBounds = lb.removeFromRight(lb.getWidth() - kw);
+    centerKnobBounds = lb;
+
+    auto _footerBounds = footerBounds;
+    //auto _bottomBounds = bottomBounds;
+    auto _leftKnobBounds = leftKnobBounds;
+    auto _rightKnobBounds = rightKnobBounds;
+    auto _leftFileBounds = leftFileBounds;
+    auto _rightFileBounds = rightFileBounds;
+    auto _centerKnobBounds = centerKnobBounds;
 
 
+    _leftFileBounds.setWidth(juce::jmax(_leftFileBounds.getWidth(), 82));
+    _rightFileBounds.setWidth(juce::jmax(_leftFileBounds.getWidth(), 82));
+    fileBrowserIR1.setBounds(_leftFileBounds);
+    fileBrowserIR2.setBounds(_rightFileBounds);
 
-    DBG(juce::String(middle) + ", " + juce::String(height));
-
-    leftFileBounds.setWidth(juce::jmax(leftFileBounds.getWidth(), 82));
-    rightFileBounds.setWidth(juce::jmax(leftFileBounds.getWidth(), 82));
-    fileBrowserIR1.setBounds(leftFileBounds);
-    fileBrowserIR2.setBounds(rightFileBounds);
-
-    int kh = leftKnobBounds.getHeight() / 4.3f;
+    int kh = leftKnobBounds.getHeight() / 6;
     int btw = leftKnobBounds.getWidth() / 2;
-    audioProcessor.procLeft.sliderGain.setBounds(leftKnobBounds.removeFromTop(kh));
-    audioProcessor.procLeft.sliderMix.setBounds(leftKnobBounds.removeFromTop(kh));
-    audioProcessor.procLeft.sliderLowCut.setBounds(leftKnobBounds.removeFromTop(kh));
-    audioProcessor.procLeft.sliderHighCut.setBounds(leftKnobBounds.removeFromTop(kh));
-    audioProcessor.procLeft.buttonBypass.setBounds(leftKnobBounds.removeFromLeft(btw));
-    audioProcessor.procLeft.buttonInvert.setBounds(leftKnobBounds);
+    audioProcessor.procLeft.sliderGain.setBounds(_leftKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procLeft.sliderMix.setBounds(_leftKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procLeft.sliderLowCut.setBounds(_leftKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procLeft.sliderHighCut.setBounds(_leftKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procLeft.sliderDelay.setBounds(_leftKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procLeft.sliderPan.setBounds(_leftKnobBounds.removeFromTop(kh).expanded(-5, -5));
 
-    audioProcessor.procRight.sliderGain.setBounds(rightKnobBounds.removeFromTop(kh));
-    audioProcessor.procRight.sliderMix.setBounds(rightKnobBounds.removeFromTop(kh));
-    audioProcessor.procRight.sliderLowCut.setBounds(rightKnobBounds.removeFromTop(kh));
-    audioProcessor.procRight.sliderHighCut.setBounds(rightKnobBounds.removeFromTop(kh));
-    audioProcessor.procRight.buttonBypass.setBounds(rightKnobBounds.removeFromLeft(btw));
-    audioProcessor.procRight.buttonInvert.setBounds(rightKnobBounds);
+    audioProcessor.procRight.sliderGain.setBounds(_rightKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procRight.sliderMix.setBounds(_rightKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procRight.sliderLowCut.setBounds(_rightKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procRight.sliderHighCut.setBounds(_rightKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procRight.sliderDelay.setBounds(_rightKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procRight.sliderPan.setBounds(_rightKnobBounds.removeFromTop(kh).expanded(-5, -5));
 
-    audioProcessor.procOut.sliderGain.setBounds(centerKnobBounds.removeFromTop(kh));
-    audioProcessor.procOut.sliderMix.setBounds(centerKnobBounds.removeFromTop(kh));
-    audioProcessor.procOut.sliderLowCut.setBounds(centerKnobBounds.removeFromTop(kh));
-    audioProcessor.procOut.sliderHighCut.setBounds(centerKnobBounds.removeFromTop(kh));
+    audioProcessor.procOut.sliderGain.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procOut.sliderMix.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procOut.sliderLowCut.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procOut.sliderHighCut.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procOut.sliderPan.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
 
-    int btm_w = bottomBounds.getWidth() / 4;
+    
+    auto ftr_1 = _footerBounds.removeFromLeft(kw);
+    audioProcessor.procLeft.buttonBypass.setBounds(ftr_1.removeFromLeft(ftr_1.getWidth() / 2).expanded(-5, -5));
+    audioProcessor.procLeft.buttonInvert.setBounds(ftr_1.expanded(-5, -5));
 
+    auto ftr_2 = _footerBounds.removeFromLeft(_leftFileBounds.getWidth());
+    auto ftr_3 = _footerBounds.removeFromLeft(kw);
+    audioProcessor.procOut.buttonBypass.setBounds(ftr_3.removeFromLeft(ftr_3.getWidth() / 2).expanded(-5, -5));
+    audioProcessor.procOut.buttonInvert.setBounds(ftr_3.expanded(-5, -5));
 
+    auto ftr_4 = _footerBounds.removeFromLeft(_rightFileBounds.getWidth());;
+    auto ftr_5 = _footerBounds;
+    audioProcessor.procRight.buttonBypass.setBounds(ftr_5.removeFromLeft(ftr_5.getWidth() / 2).expanded(-5, -5));
+    audioProcessor.procRight.buttonInvert.setBounds(ftr_5.expanded(-5, -5));
 
+    audioProcessor.procOut.comboStereoMode.setBounds(ftr_4);
 }
 
-void PluginAudioProcessorEditor::init_sliders()
-{
-    ProcessorGroup* proc_list[] = { &audioProcessor.procLeft, &audioProcessor.procRight, &audioProcessor.procOut };
-    for each (ProcessorGroup * proc in proc_list)
-    {
-        juce::Slider* sliderList[] = {
-            &proc->sliderMix,
-            &proc->sliderGain,
-            &proc->sliderLowCut,
-            &proc->sliderHighCut,
-            &proc->sliderPan,
-            &proc->sliderDelay
-        };
-        juce::String nameList[] = {
-            proc->name_mix,
-            proc->name_gain,
-            proc->name_lowCut,
-            proc->name_highCut,
-            proc->name_pan,
-            proc->name_delay
-        };
-        float minList[] = {
-            Parameters::panMin,
-            Parameters::gainMin,
-            Parameters::freqMin,
-            Parameters::freqMin,
-            Parameters::panMin,
-            Parameters::delayMin
-        };
-        float maxList[] = {
-            Parameters::panMax,
-            Parameters::gainMax,
-            Parameters::freqMax,
-            Parameters::freqMax,
-            Parameters::panMax,
-            Parameters::delayMax
-        };
-
-        const float skewList[] = {
-            1.0f,
-            2.0f,
-            10.0f,
-            10.0f,
-            1.0f,
-            0.5f
-        };
-
-        const float returnList[] = {
-            1.0f,
-            0.0f,
-            20.0f,
-            20000.0f,
-            0.5f,
-            0.0f
-        };
-        const juce::String suffixList[] = {
-            "",
-            "dB",
-            "Hz",
-            "Hz",
-            "",
-            ""
-        };
-
-        enum {MIX, GAIN, LOWCUT, HIGHCUT, PAN, DELAY, COUNT};
-        for (int i = 0; i < COUNT; i++) {
-            juce::Slider& slider = *sliderList[i];
-            slider.setLookAndFeel(lookAndFeel);
-            slider.setName(nameList[i]);
-            slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-            slider.setTextBoxStyle(juce::Slider::NoTextBox, false, 72, 32);
-            slider.setSkewFactor(skewList[i], false);
-            slider.setRange(minList[i], maxList[i], 0.01);
-            slider.setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::whitesmoke.withAlpha(0.25f));
-            slider.setDoubleClickReturnValue(true, returnList[i], juce::ModifierKeys::ctrlModifier);
-            slider.setTextValueSuffix(suffixList[i]);
-            addAndMakeVisible(slider);
-        }
-    }
-}
-
-void PluginAudioProcessorEditor::init_buttons()
-{
-    ProcessorGroup* proc_list[] = { &audioProcessor.procLeft, &audioProcessor.procRight, &audioProcessor.procOut };
-    for each (ProcessorGroup * proc in proc_list)
-    {
-        juce::TextButton* buttonList[] = {
-                &proc->buttonBypass,
-                & proc->buttonInvert,
-                &proc->buttonStereoMode
-        };
-
-        const juce::String textList[] = {
-            "Solo",
-            "Phase Invert",
-            "Stereo Mode"
-        };
-
-        enum {BYPASS, INVERT, STEREOMODE, COUNT};
-        for (int i = 0; i < COUNT; i++) {
-            juce::TextButton& button = *buttonList[i];
-            button.setLookAndFeel(lookAndFeel);
-            button.setButtonText(textList[i]);
-            addAndMakeVisible(button);
-        }
-
-    }
-}
 
 

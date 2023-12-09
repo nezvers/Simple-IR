@@ -13,6 +13,7 @@
 #include "JuceHeader.h"
 #include "LowHighCutFilters.h"
 #include "../Parameters/Globals.h"
+#include <vector>
 
 class ProcessorGroup {
 public:
@@ -21,7 +22,7 @@ public:
         DBG("_ProcessorGroup()" + suffix);
         param_file += idSuffix;
         param_directory += idSuffix;
-        param_stereoMode += idSuffix;
+        id_stereoMode += idSuffix;
         id_mix += idSuffix;
         id_gain += idSuffix;
         id_lowCut += idSuffix;
@@ -30,12 +31,40 @@ public:
         id_delay += idSuffix;
         id_bypass += idSuffix;
         id_invert += idSuffix;
+
+        initSliders();
+        initButtons();
     };
+    ~ProcessorGroup() {
+        juce::Slider* sliderList[] = {
+            &sliderMix,
+            &sliderGain,
+            &sliderLowCut,
+            &sliderHighCut,
+            &sliderPan,
+            &sliderDelay
+        };
+        for (int i = 0; i < 6; i++) {
+            juce::Slider& slider = *sliderList[i];
+            slider.setLookAndFeel(nullptr);
+        }
+
+        juce::Button* buttonList[] = {
+            &buttonBypass,
+            &buttonInvert
+        };
+        for (int i = 0; i < 2; i++) {
+            juce::Button& button = *buttonList[i];
+            button.setLookAndFeel(nullptr);
+        }
+    };
+
+    //SlickLookAndFeel lookAndFeel;
 #pragma region Parameter IDs
     juce::String suffix;
     juce::String param_file = "file";
     juce::String param_directory = "directory";
-    juce::String param_stereoMode = "stereo";
+    juce::String id_stereoMode = "stereo";
     juce::String id_mix = "mix";
     juce::String id_gain = "gain";
     juce::String id_lowCut = "lowCut";
@@ -55,6 +84,7 @@ public:
     const juce::String name_delay = "Delay";
     const juce::String name_bypass = "Bypass";
     const juce::String name_invert = "Phase Invert";
+    const juce::String name_stereoMode = "Stereo Mode";
 #pragma endregion
 #pragma region value links
     std::atomic<float>* valueMix = nullptr;
@@ -65,6 +95,7 @@ public:
     std::atomic<float>* valueDelay = nullptr;
     std::atomic<float>* valueBypass = nullptr;
     std::atomic<float>* valueInvert = nullptr;
+    std::atomic<float>* valueStereoMode = nullptr;
 #pragma endregion
 #pragma region Components
     juce::Slider sliderMix;//
@@ -75,11 +106,12 @@ public:
     juce::Slider sliderDelay;
     juce::TextButton buttonBypass;
     juce::TextButton buttonInvert;
-    juce::TextButton buttonStereoMode;
+    juce::ComboBox comboStereoMode;
 #pragma endregion
 #pragma region Attachments
     using nSliderAttachment = std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>;
     using nButtonAttachment = std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>;
+    using nComboBoxAttachment = std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment>;
 
     nSliderAttachment attachmentMix;
     nSliderAttachment attachmentGain;
@@ -89,6 +121,7 @@ public:
     nSliderAttachment attachmentDelay;
     nButtonAttachment attachmentBypass;
     nButtonAttachment attachmentInvert;
+    nComboBoxAttachment attachmentStereoMode;
 #pragma endregion
 #pragma region DSP
     juce::dsp::DryWetMixer<float> mix;
@@ -127,6 +160,123 @@ public:
         valueDelay = vts->getRawParameterValue(id_delay);
         valueBypass = vts->getRawParameterValue(id_bypass);
         valueInvert = vts->getRawParameterValue(id_invert);
+        valueStereoMode = vts->getRawParameterValue(id_stereoMode);
+        initSliders();
+        initButtons();
+    }
+    void initSliders()
+    {
+        juce::Slider* sliderList[] = {
+            &sliderMix,
+            &sliderGain,
+            &sliderLowCut,
+            &sliderHighCut,
+            &sliderPan,
+            &sliderDelay
+        };
+        juce::String nameList[] = {
+            name_mix,
+            name_gain,
+            name_lowCut,
+            name_highCut,
+            name_pan,
+            name_delay
+        };
+        float minList[] = {
+            Parameters::panMin,
+            Parameters::gainMin,
+            Parameters::freqMin,
+            Parameters::freqMin,
+            Parameters::panMin,
+            Parameters::delayMin
+        };
+        float maxList[] = {
+            Parameters::panMax,
+            Parameters::gainMax,
+            Parameters::freqMax,
+            Parameters::freqMax,
+            Parameters::panMax,
+            Parameters::delayMax
+        };
+
+        const float skewList[] = {
+            1.0f,
+            2.0f,
+            10.0f,
+            10.0f,
+            1.0f,
+            0.5f
+        };
+
+        const float returnList[] = {
+            1.0f,
+            0.0f,
+            20.0f,
+            20000.0f,
+            0.5f,
+            0.0f
+        };
+        const juce::String suffixList[] = {
+            "",
+            "dB",
+            "Hz",
+            "Hz",
+            "",
+            ""
+        };
+
+        enum { MIX, GAIN, LOWCUT, HIGHCUT, PAN, DELAY, COUNT };
+        for (int i = 0; i < COUNT; i++) {
+            juce::Slider& slider = *sliderList[i];
+            //slider.setLookAndFeel(&lookAndFeel);
+            slider.setName(nameList[i]);
+            slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
+            slider.setTextBoxStyle(juce::Slider::NoTextBox, false, 72, 32);
+            slider.setSkewFactor(skewList[i], false);
+            slider.setRange(minList[i], maxList[i], 0.01);
+            slider.setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::whitesmoke.withAlpha(0.25f));
+            slider.setDoubleClickReturnValue(true, returnList[i], juce::ModifierKeys::ctrlModifier);
+            slider.setTextValueSuffix(suffixList[i]);
+        }
+    }
+
+    void initButtons()
+    {
+        juce::TextButton* buttonList[] = {
+                &buttonBypass,
+                &buttonInvert,
+        };
+
+        const juce::String textList[] = {
+            "Solo",
+            "Phase Invert",
+        };
+
+        enum { BYPASS, INVERT, COUNT };
+        for (int i = 0; i < COUNT; i++) {
+            juce::TextButton& button = *buttonList[i];
+            //button.setLookAndFeel(&lookAndFeel);
+            button.setButtonText(textList[i]);
+        }
+
+        //comboStereoMode.addItem("Dual Mono", 1);
+        //comboStereoMode.addItem("Stereo", 2);
+        //comboStereoMode.addItem("Mono", 3);
+    }
+
+    std::vector<juce::Component*> getComponentList() {
+        std::vector < juce::Component*> list = {
+            &sliderMix,
+            &sliderGain,
+            &sliderLowCut,
+            &sliderHighCut,
+            &sliderPan,
+            &sliderDelay,
+            &buttonBypass,
+            &buttonInvert,
+            &comboStereoMode
+        };
+        return list;
     }
 
     // Generates ValueTreeState parameters
@@ -140,6 +290,7 @@ public:
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_delay, name_delay, Parameters::panMin, Parameters::panMax, 0.0f));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_bypass, name_bypass, Parameters::panMin, Parameters::panMax, 0.0f));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_invert, name_invert, Parameters::panMin, Parameters::panMax, 0.0f));
+        params.push_back(std::make_unique<juce::AudioParameterChoice>(id_stereoMode, name_stereoMode, StringArray("Dual Mono", "Stereo", "Mono"), 0));
     }
 
     void setTreeStateReferences(juce::AudioProcessorValueTreeState* vts) {
@@ -157,6 +308,7 @@ public:
         attachmentDelay = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(*vts, id_delay, sliderDelay);
         attachmentBypass = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(*vts, id_bypass, buttonBypass);
         attachmentInvert = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(*vts, id_invert, buttonInvert);
+        attachmentStereoMode = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(*vts, id_stereoMode, comboStereoMode);
     }
 
     // LOAD
@@ -170,7 +322,6 @@ public:
         }
         file = juce::File(vt->getProperty(param_file));
         directory = juce::File(vt->getProperty(param_directory));
-        stereoMode = (Parameters::enumStereo) int(vt->getProperty(param_stereoMode));
 
         juce::String extension = file.getFileExtension();
         if (extension == ".wav" || extension == ".aiff") {
@@ -193,6 +344,7 @@ public:
         // valueDelay->load();
         // valueBypass->load();
         // valueInvert->load();
+        DBG(valueStereoMode->load());
     }
 
     // TODO: Parameter object would trigger onChange callback
