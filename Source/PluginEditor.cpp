@@ -27,7 +27,7 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
 
     float height = 545.f;
     setSize (840, int(height));
-    setResizable(true, false);
+    //setResizable(true, false);
     //setResizeLimits(100, 100, 9999, 9999);
     getConstrainer()->setFixedAspectRatio(840.f / height);
 

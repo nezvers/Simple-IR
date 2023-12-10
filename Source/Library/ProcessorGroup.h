@@ -329,12 +329,13 @@ public:
         DBG("setStateInformation()" + suffix);
         variableTree = vt;
         
+
         juce::File fileLoad = juce::File(vt->getProperty(param_file));
         if (!fileLoad.existsAsFile()) {
             return;
         }
-        file = juce::File(vt->getProperty(param_file));
-        directory = juce::File(vt->getProperty(param_directory));
+        file = fileLoad;
+        directory = file.getParentDirectory().getFullPathName();
 
         juce::String extension = file.getFileExtension();
         if (extension == ".wav" || extension == ".aiff") {
@@ -370,13 +371,15 @@ public:
     void setFile(juce::File value) {
         DBG("setFile()" + suffix);
         if (!value.existsAsFile()) { return; }
-        juce::String extension = file.getFileExtension();
+
+        juce::String extension = value.getFileExtension();
         if (extension != ".wav" && extension != ".aiff") { return; }
-        
+        DBG(value.getFileName());
+
         file = value;
         directory = value.getParentDirectory().getFullPathName();
         variableTree->setProperty(param_file, file.getFullPathName(), nullptr);
-        variableTree->setProperty(param_directory, file.getParentDirectory().getFullPathName(), nullptr);
+        variableTree->setProperty(param_directory, directory.getFullPathName(), nullptr);
         
         convolution.loadImpulseResponse(file,
             juce::dsp::Convolution::Stereo::yes,
