@@ -29,6 +29,7 @@ PluginAudioProcessor::PluginAudioProcessor()
     for (int i = 0; i < 3; i++) {
         procGroup[i].init(&valueTreeState);
     }
+    procLeft.setLinkButtons(procRight);
 
     variableTree = {
         Parameters::variableTreeName, {},{

@@ -38,6 +38,9 @@ public:
             name_pan = "Reverb";
             name_bypass = "Bypass";
         }
+        else {
+            name_bypass = "S";
+        }
     };
     ~ProcessorGroup() {
         sliderMix.setLookAndFeel(nullptr);
@@ -75,7 +78,7 @@ public:
         juce::String name_pan = "Pan";
     const juce::String name_delay = "Delay";
         juce::String name_bypass = "S";
-    const juce::String name_invert = "Phase Invert";
+    const juce::String name_invert = "P";
     const juce::String name_stereoMode = "Stereo Mode";
 #pragma endregion
 #pragma region value links
@@ -129,6 +132,7 @@ public:
     juce::AudioProcessorValueTreeState* valueTreeState = nullptr;
     Parameters::enumStereo stereoMode = Parameters::enumStereo::DUAL_MONO;
     bool is_output = false;
+    ProcessorGroup* other = nullptr;
 #pragma endregion
 
     // Initializes DSP
@@ -265,14 +269,14 @@ public:
     void initButtons()
     {
         DBG("Init Buttons " + suffix);
-        if (is_output) {
-            //buttonBypass.setLookAndFeel(&lookAndFeel);
-            buttonBypass.setButtonText(name_bypass);
-        }
-        else {
-            //buttonInvert.setLookAndFeel(&lookAndFeel);
-            buttonInvert.setButtonText(name_invert);
-        }
+        buttonBypass.setButtonText(name_bypass);
+        buttonInvert.setButtonText(name_invert);
+
+        buttonBypass.setToggleable(true);
+        buttonInvert.setToggleable(true);
+
+        buttonBypass.setClickingTogglesState(true);
+        buttonInvert.setClickingTogglesState(true);
     }
 
     void initComboBoxes() {
@@ -323,10 +327,10 @@ public:
         {
             params.push_back(std::make_unique<juce::AudioParameterFloat>(id_mix, name_mix, Parameters::panMin, Parameters::panMax, 0.5f));
             params.push_back(std::make_unique<juce::AudioParameterFloat>(id_pan, name_pan, Parameters::panMin, Parameters::panMax, 0.5f));
+            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_delay, name_delay, Parameters::panMin, Parameters::panMax, 0.0f));
         }
 
         params.push_back(std::make_unique<juce::AudioParameterChoice>(id_stereoMode, name_stereoMode, StringArray("Dual Mono", "Stereo", "Mono"), 0));
-        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_delay, name_delay, Parameters::panMin, Parameters::panMax, 0.0f));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_invert, name_invert, Parameters::panMin, Parameters::panMax, 0.0f));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_bypass, name_bypass, Parameters::panMin, Parameters::panMax, 0.0f));
     }
@@ -364,6 +368,7 @@ public:
         pan.setWetMixProportion(valuePan->load());
         if (is_output) {
             // valueStereoMode->load();
+            
         }
         else {
             // valueDelay->load();
@@ -392,6 +397,30 @@ public:
             juce::dsp::Convolution::Stereo::yes,
             juce::dsp::Convolution::Trim::yes,
             0);
+    }
+
+    void setLinkButtons(ProcessorGroup& _other) {
+        other = &_other;
+        buttonBypass.onClick = [this]() {
+            if (!buttonBypass.getToggleState()) {
+                return;
+            }
+            
+            if (other->buttonBypass.getToggleState()) {
+                other->buttonBypass.setToggleState(false, juce::sendNotification);
+                DBG("Left disable Right");
+            }
+        };
+        other->buttonBypass.onClick = [this]() {
+            if (!other->buttonBypass.getToggleState()) {
+                return;
+            }
+
+            if (buttonBypass.getToggleState()) {
+                buttonBypass.setToggleState(false, juce::sendNotification);
+                DBG("Right disable Left");
+            }
+        };
     }
 
     void process(
