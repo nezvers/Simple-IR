@@ -57,7 +57,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 
-    ProcessorGroup procGroup[3] = { ProcessorGroup("1"), ProcessorGroup("2"), ProcessorGroup("3") };
+    ProcessorGroup procGroup[3] = { ProcessorGroup("0"), ProcessorGroup("1"), ProcessorGroup("2") };
     juce::AudioProcessorValueTreeState valueTreeState{*this, nullptr, "PARAMETERS", createParameterLayout()};
     juce::ValueTree variableTree;
     ProcessorGroup& procOut{ procGroup[0]};

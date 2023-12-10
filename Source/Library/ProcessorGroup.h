@@ -127,7 +127,6 @@ public:
     juce::ValueTree* variableTree = nullptr;
     juce::AudioProcessorValueTreeState* valueTreeState = nullptr;
     Parameters::enumStereo stereoMode = Parameters::enumStereo::DUAL_MONO;
-    bool is_init = false;
     bool is_output = false;
 #pragma endregion
 
@@ -143,7 +142,6 @@ public:
     }
 
     void init(juce::AudioProcessorValueTreeState* vts) {
-        if (is_init) { return; }
         DBG("init() " + suffix);
 
         initLinks(vts);
@@ -158,33 +156,38 @@ public:
         attachmentLowCut = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(*vts, id_lowCut, sliderLowCut);
         attachmentHighCut = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(*vts, id_highCut, sliderHighCut);
         attachmentPan = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(*vts, id_pan, sliderPan);
-        
+        if (is_output) {
+            auto param = vts->getParameter(id_stereoMode);
+            DBG(juce::String("Parameter: ") + juce::String(""));
             attachmentStereoMode = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(*vts, id_stereoMode, comboStereoMode);
-        
+        }
+        else {
             attachmentDelay = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(*vts, id_delay, sliderDelay);
             attachmentInvert = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(*vts, id_invert, buttonInvert);
+        }
         attachmentBypass = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(*vts, id_bypass, buttonBypass);
     }
     // Links atomic valiables
     void initLinks(juce::AudioProcessorValueTreeState* vts) {
-        DBG("initLinks()" + suffix);
+        DBG("initLinks() " + suffix);
         valueMix = vts->getRawParameterValue(id_mix);
         valueGain = vts->getRawParameterValue(id_gain);
         valueLowCut = vts->getRawParameterValue(id_lowCut);
         valueHighCut = vts->getRawParameterValue(id_highCut);
         valuePan = vts->getRawParameterValue(id_pan);
-        
+        if (is_output) {
             valueStereoMode = vts->getRawParameterValue(id_stereoMode);
-        
+        }
+        else {
             valueDelay = vts->getRawParameterValue(id_delay);
             valueInvert = vts->getRawParameterValue(id_invert);
-        
+        }
         valueBypass = vts->getRawParameterValue(id_bypass);
     }
     
     void initSliders()
     {
-        DBG("Init Sliders");
+        DBG("Init Sliders ");
         juce::Slider* sliderList[] = {
             &sliderMix,
             &sliderGain,
@@ -254,18 +257,21 @@ public:
             slider.setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::whitesmoke.withAlpha(0.25f));
             slider.setDoubleClickReturnValue(true, returnList[i], juce::ModifierKeys::ctrlModifier);
             slider.setTextValueSuffix(suffixList[i]);
+            // TODO:lokAndFeel
         }
     }
 
     void initButtons()
     {
-        DBG("Init Buttons");
-
+        DBG("Init Buttons " + suffix);
+        if (is_output) {
             //buttonBypass.setLookAndFeel(&lookAndFeel);
             buttonBypass.setButtonText(name_bypass);
-        
+        }
+        else {
             //buttonInvert.setLookAndFeel(&lookAndFeel);
             buttonInvert.setButtonText(name_invert);
+        }
     }
 
     void initComboBoxes() {
@@ -301,18 +307,20 @@ public:
 
     // Generates ValueTreeState parameters
     void setParameterLayout(std::vector <std::unique_ptr<juce::RangedAudioParameter>>& params) {
-        DBG("setParameterLayout()" + suffix);
+        DBG("setParameterLayout() " + suffix);
+        // TODO: figure out why attachments fails with selective layout creation
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_mix, name_mix, Parameters::panMin, Parameters::panMax, 1.0f));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_gain, name_gain, Parameters::gainMin, Parameters::gainMax, 0.0f));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_lowCut, name_lowCut, Parameters::freqMin, Parameters::freqMax, Parameters::freqMin));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_highCut, name_highCut, Parameters::freqMin, Parameters::freqMax, Parameters::freqMax));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_pan, name_pan, Parameters::panMin, Parameters::panMax, 0.5f));
-        
+        //if (is_output) {
             params.push_back(std::make_unique<juce::AudioParameterChoice>(id_stereoMode, name_stereoMode, StringArray("Dual Mono", "Stereo", "Mono"), 0));
-        
+        //}
+        //else {
             params.push_back(std::make_unique<juce::AudioParameterFloat>(id_delay, name_delay, Parameters::panMin, Parameters::panMax, 0.0f));
             params.push_back(std::make_unique<juce::AudioParameterFloat>(id_invert, name_invert, Parameters::panMin, Parameters::panMax, 0.0f));
-        
+        //}
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_bypass, name_bypass, Parameters::panMin, Parameters::panMax, 0.0f));
     }
 
