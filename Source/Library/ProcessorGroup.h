@@ -14,6 +14,7 @@
 #include "LowHighCutFilters.h"
 #include "../Parameters/Globals.h"
 #include <vector>
+#include "CustomLookAndFeel.h"
 
 class ProcessorGroup {
 public:
@@ -54,7 +55,6 @@ public:
         comboStereoMode.setLookAndFeel(nullptr);
     };
 
-    //SlickLookAndFeel lookAndFeel;
 #pragma region Parameter IDs
     juce::String suffix;
     juce::String param_file = "file";
@@ -133,6 +133,7 @@ public:
     Parameters::enumStereo stereoMode = Parameters::enumStereo::DUAL_MONO;
     bool is_output = false;
     ProcessorGroup* other = nullptr;
+    SlickLookAndFeel lookAndFeel;
 #pragma endregion
 
     // Initializes DSP
@@ -408,7 +409,6 @@ public:
             
             if (other->buttonBypass.getToggleState()) {
                 other->buttonBypass.setToggleState(false, juce::sendNotification);
-                DBG("Left disable Right");
             }
         };
         other->buttonBypass.onClick = [this]() {
@@ -418,7 +418,6 @@ public:
 
             if (buttonBypass.getToggleState()) {
                 buttonBypass.setToggleState(false, juce::sendNotification);
-                DBG("Right disable Left");
             }
         };
     }

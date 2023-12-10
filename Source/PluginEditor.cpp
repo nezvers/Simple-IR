@@ -82,9 +82,9 @@ void PluginAudioProcessorEditor::paint (juce::Graphics& g)
     //g.setColour (juce::Colours::white);
     //g.setFont (15.0f);
     //g.drawFittedText ("Simple IR", getLocalBounds(), juce::Justification::centredTop, 1.0f);
-    float g1 = 0.1f;
-    float g2 = 0.2f;
-    float g3 = 0.3f;
+    float g1 = 0.17f;
+    float g2 = 0.17f;
+    float g3 = 0.23f;
     float g4 = 0.4f;
     g.setColour(juce::Colour::fromFloatRGBA(g3, g3, g3, 1.0f));
     g.fillRect(leftKnobBounds.getX(), leftKnobBounds.getY(), leftKnobBounds.getWidth(), leftKnobBounds.getHeight());
