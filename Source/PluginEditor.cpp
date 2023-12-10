@@ -30,6 +30,16 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     setResizable(true, false);
     //setResizeLimits(100, 100, 9999, 9999);
     getConstrainer()->setFixedAspectRatio(840.f / height);
+
+    for each (Component * component in audioProcessor.procLeft.getComponentList()) {
+        addAndMakeVisible(component);
+    }
+    for each (Component * component in audioProcessor.procRight.getComponentList()) {
+        addAndMakeVisible(component);
+    }
+    for each (Component * component in audioProcessor.procOut.getComponentList()) {
+        addAndMakeVisible(component);
+    }
 }
 
 PluginAudioProcessorEditor::~PluginAudioProcessorEditor()
@@ -148,11 +158,11 @@ void PluginAudioProcessorEditor::resized()
     audioProcessor.procOut.buttonInvert.setBounds(ftr_3.expanded(-5, -5));
 
     auto ftr_4 = _footerBounds.removeFromLeft(_rightFileBounds.getWidth());;
+    audioProcessor.procOut.comboStereoMode.setBounds(ftr_4.removeFromLeft(ftr_4.getWidth() / 2).expanded(-5, -5));
+    
     auto ftr_5 = _footerBounds;
     audioProcessor.procRight.buttonBypass.setBounds(ftr_5.removeFromLeft(ftr_5.getWidth() / 2).expanded(-5, -5));
-    audioProcessor.procRight.buttonInvert.setBounds(ftr_5.expanded(-5, -5));
 
-    audioProcessor.procOut.comboStereoMode.setBounds(ftr_4);
 }
 
 

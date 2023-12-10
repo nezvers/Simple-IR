@@ -26,8 +26,9 @@ PluginAudioProcessor::PluginAudioProcessor()
 {
     DBG("CONSTRUCTOR");
 
+    procOut.is_output = true;
     for (int i = 0; i < 3; i++) {
-        procGroup[i].setTreeStateReferences(&valueTreeState);
+        procGroup[i].init(&valueTreeState);
     }
 
     variableTree = {
@@ -83,7 +84,6 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     procOut.process_combine(contextLeft, contextRight, procLeft.buffer, procRight.buffer);
 
     buffer.makeCopyOf(procOut.buffer);
-    
 }
 
 
@@ -130,7 +130,7 @@ void PluginAudioProcessor::setStateInformation (const void* data, int sizeInByte
     for (int i = 0; i < 3; i++) {
         procGroup[i].setStateInformation(&variableTree);
     }
-
+    
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout PluginAudioProcessor::createParameterLayout()
