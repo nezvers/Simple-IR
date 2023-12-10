@@ -17,7 +17,7 @@
 
 class ProcessorGroup {
 public:
-    ProcessorGroup(juce::String idSuffix) {
+    ProcessorGroup(juce::String idSuffix, bool _is_output) {
         suffix = idSuffix;
         DBG("_ProcessorGroup() " + suffix);
         param_file += idSuffix;
@@ -32,6 +32,7 @@ public:
         id_bypass += idSuffix;
         id_invert += idSuffix;
 
+        is_output = _is_output;
         if (is_output) {
             name_gain = "Output";
             name_pan = "Reverb";
@@ -73,7 +74,7 @@ public:
     const juce::String name_highCut = "High Cut";
         juce::String name_pan = "Pan";
     const juce::String name_delay = "Delay";
-        juce::String name_bypass = "Solo";
+        juce::String name_bypass = "S";
     const juce::String name_invert = "Phase Invert";
     const juce::String name_stereoMode = "Stereo Mode";
 #pragma endregion
@@ -309,18 +310,24 @@ public:
     void setParameterLayout(std::vector <std::unique_ptr<juce::RangedAudioParameter>>& params) {
         DBG("setParameterLayout() " + suffix);
         // TODO: figure out why attachments fails with selective layout creation
-        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_mix, name_mix, Parameters::panMin, Parameters::panMax, 1.0f));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_gain, name_gain, Parameters::gainMin, Parameters::gainMax, 0.0f));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_lowCut, name_lowCut, Parameters::freqMin, Parameters::freqMax, Parameters::freqMin));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_highCut, name_highCut, Parameters::freqMin, Parameters::freqMax, Parameters::freqMax));
-        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_pan, name_pan, Parameters::panMin, Parameters::panMax, 0.5f));
-        //if (is_output) {
-            params.push_back(std::make_unique<juce::AudioParameterChoice>(id_stereoMode, name_stereoMode, StringArray("Dual Mono", "Stereo", "Mono"), 0));
-        //}
-        //else {
-            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_delay, name_delay, Parameters::panMin, Parameters::panMax, 0.0f));
-            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_invert, name_invert, Parameters::panMin, Parameters::panMax, 0.0f));
-        //}
+        
+        if (is_output)
+        {
+            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_mix, name_mix, Parameters::panMin, Parameters::panMax, 1.0f));
+            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_pan, name_pan, Parameters::panMin, Parameters::panMax, 0.0f));
+        }
+        else 
+        {
+            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_mix, name_mix, Parameters::panMin, Parameters::panMax, 0.5f));
+            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_pan, name_pan, Parameters::panMin, Parameters::panMax, 0.5f));
+        }
+
+        params.push_back(std::make_unique<juce::AudioParameterChoice>(id_stereoMode, name_stereoMode, StringArray("Dual Mono", "Stereo", "Mono"), 0));
+        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_delay, name_delay, Parameters::panMin, Parameters::panMax, 0.0f));
+        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_invert, name_invert, Parameters::panMin, Parameters::panMax, 0.0f));
         params.push_back(std::make_unique<juce::AudioParameterFloat>(id_bypass, name_bypass, Parameters::panMin, Parameters::panMax, 0.0f));
     }
 

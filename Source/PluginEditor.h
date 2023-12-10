@@ -35,7 +35,10 @@ private:
     
     FileBrowserSamples fileBrowserIR1;
     FileBrowserSamples fileBrowserIR2;
-
+    
+    juce::TextButton buttonLoadReverb;
+    juce::Label labelReverb;
+    std::unique_ptr<juce::FileChooser> fileChooser;
 
     juce::Rectangle<int> localBounds;
     juce::Rectangle<int> footerBounds;

@@ -25,6 +25,31 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
     fileBrowserIR2.onFileDoubleClick = [this](juce::File file)
     {audioProcessor.procRight.setFile(file); };
 
+    //addAndMakeVisible(labelReverb);
+    //labelReverb.setText(audioProcessor.procOut.file.getFileName(), juce::dontSendNotification);
+
+    addAndMakeVisible(buttonLoadReverb);
+    buttonLoadReverb.setButtonText(juce::String("Reverb: ") + audioProcessor.procOut.file.getFileName());
+    buttonLoadReverb.onClick = [this]() {
+        juce::WildcardFileFilter fileFilterReverb = juce::WildcardFileFilter("*.wav;*.aiff", "", "Choose File");
+        fileChooser = std::make_unique<juce::FileChooser>("Choose File", audioProcessor.procOut.file, "*", true);
+        const auto fileFlags = juce::FileBrowserComponent::openMode 
+            | juce::FileBrowserComponent::canSelectFiles
+            | juce::FileBrowserComponent::canSelectDirectories;
+        
+        std::function<void(const juce::FileChooser &)> fileCallback = [this](const juce::FileChooser &_fileChooser) {
+            juce::File file = _fileChooser.getResult();
+            if (!file.existsAsFile()) { return; }
+
+            juce::String extension = file.getFileExtension();
+            if (extension != ".wav" && extension != ".aiff") { return; }
+
+            audioProcessor.procOut.setFile(file);
+            buttonLoadReverb.setButtonText(juce::String("Reverb: ") + audioProcessor.procOut.file.getFileName());
+        };
+        fileChooser->launchAsync(fileFlags, fileCallback, nullptr);
+    };
+
     float height = 545.f;
     setSize (840, int(height));
     //setResizable(true, false);
@@ -146,6 +171,7 @@ void PluginAudioProcessorEditor::resized()
     audioProcessor.procOut.sliderLowCut.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
     audioProcessor.procOut.sliderHighCut.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
     audioProcessor.procOut.sliderPan.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    audioProcessor.procOut.buttonBypass.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
 
     
     auto ftr_1 = _footerBounds.removeFromLeft(kw);
@@ -153,15 +179,20 @@ void PluginAudioProcessorEditor::resized()
     audioProcessor.procLeft.buttonInvert.setBounds(ftr_1.expanded(-5, -5));
 
     auto ftr_2 = _footerBounds.removeFromLeft(_leftFileBounds.getWidth());
+    buttonLoadReverb.setBounds(ftr_2.expanded(-5, -5));
+    //buttonLoadReverb.setBounds(ftr_2.removeFromLeft(ftr_2.getWidth() / 4).expanded(-5, -5));
+    //labelReverb.setBounds(ftr_2.expanded(-5, -5));
+
     auto ftr_3 = _footerBounds.removeFromLeft(kw);
-    audioProcessor.procOut.buttonBypass.setBounds(ftr_3.removeFromLeft(ftr_3.getWidth() / 2).expanded(-5, -5));
-    audioProcessor.procOut.buttonInvert.setBounds(ftr_3.expanded(-5, -5));
+    //audioProcessor.procOut.buttonBypass.setBounds(ftr_3.removeFromLeft(ftr_3.getWidth() / 2).expanded(-5, -5));
+    //audioProcessor.procOut.buttonInvert.setBounds(ftr_3.expanded(-5, -5));
 
     auto ftr_4 = _footerBounds.removeFromLeft(_rightFileBounds.getWidth());;
     audioProcessor.procOut.comboStereoMode.setBounds(ftr_4.removeFromLeft(ftr_4.getWidth() / 2).expanded(-5, -5));
     
     auto ftr_5 = _footerBounds;
     audioProcessor.procRight.buttonBypass.setBounds(ftr_5.removeFromLeft(ftr_5.getWidth() / 2).expanded(-5, -5));
+    audioProcessor.procRight.buttonInvert.setBounds(ftr_5.expanded(-5, -5));
 
 }
 

@@ -25,8 +25,7 @@ PluginAudioProcessor::PluginAudioProcessor()
 #endif
 {
     DBG("CONSTRUCTOR");
-
-    procOut.is_output = true;
+    
     for (int i = 0; i < 3; i++) {
         procGroup[i].init(&valueTreeState);
     }
