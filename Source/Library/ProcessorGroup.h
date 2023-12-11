@@ -14,7 +14,7 @@
 #include "LowHighCutFilters.h"
 #include "../Parameters/Globals.h"
 #include <vector>
-#include "CustomLookAndFeel.h"
+#include "../LookAndFeel/FlatStyle1.h"
 
 class ProcessorGroup {
 public:
@@ -133,7 +133,7 @@ public:
     Parameters::enumStereo stereoMode = Parameters::enumStereo::DUAL_MONO;
     bool is_output = false;
     ProcessorGroup* other = nullptr;
-    SlickLookAndFeel lookAndFeel;
+    FlatStyle1 lookAndFeel;
 #pragma endregion
 
     // Initializes DSP
@@ -254,10 +254,10 @@ public:
         enum { MIX, GAIN, LOWCUT, HIGHCUT, PAN, DELAY, COUNT };
         for (int i = 0; i < COUNT; i++) {
             juce::Slider& slider = *sliderList[i];
-            //slider.setLookAndFeel(&lookAndFeel);
+            slider.setLookAndFeel(&lookAndFeel);
             slider.setName(nameList[i]);
             slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
-            slider.setTextBoxStyle(juce::Slider::NoTextBox, false, 72, 32);
+            slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 72, 32);
             slider.setSkewFactor(skewList[i], false);
             slider.setRange(minList[i], maxList[i], 0.01);
             slider.setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::whitesmoke.withAlpha(0.25f));
@@ -278,6 +278,9 @@ public:
 
         buttonBypass.setClickingTogglesState(true);
         buttonInvert.setClickingTogglesState(true);
+
+        buttonBypass.setLookAndFeel(&lookAndFeel);
+        buttonInvert.setLookAndFeel(&lookAndFeel);
     }
 
     void initComboBoxes() {
@@ -286,7 +289,7 @@ public:
         comboStereoMode.addItem("Dual Mono", 1);
         comboStereoMode.addItem("Stereo", 2);
         comboStereoMode.addItem("Mono", 3);
-
+        comboStereoMode.setLookAndFeel(&lookAndFeel);
     }
 
     std::vector<juce::Component*> getComponentList() {

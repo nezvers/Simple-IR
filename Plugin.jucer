@@ -5,6 +5,9 @@
               includeBinaryInJuceHeader="1" maxBinaryFileSize="10485760" pluginManufacturer="NeZvers">
   <MAINGROUP id="LTHKws" name="IR Simpler">
     <GROUP id="{D405738E-BA6E-3AE9-8559-A97E59BFDD5B}" name="Source">
+      <GROUP id="{4F147220-6201-E9ED-1A43-83B123251AEF}" name="LookAndFeel">
+        <FILE id="Ygk9ru" name="FlatStyle1.h" compile="0" resource="0" file="Source/LookAndFeel/FlatStyle1.h"/>
+      </GROUP>
       <GROUP id="{0090DFEF-FBBB-ED1C-F8FA-68DABB729E27}" name="Parameters">
         <FILE id="VCd1qN" name="Globals.cpp" compile="1" resource="0" file="Source/Parameters/Globals.cpp"/>
         <FILE id="gogWPy" name="Globals.h" compile="0" resource="0" file="Source/Parameters/Globals.h"/>
