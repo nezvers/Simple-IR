@@ -11,6 +11,7 @@
       <GROUP id="{0090DFEF-FBBB-ED1C-F8FA-68DABB729E27}" name="Parameters">
         <FILE id="VCd1qN" name="Globals.cpp" compile="1" resource="0" file="Source/Parameters/Globals.cpp"/>
         <FILE id="gogWPy" name="Globals.h" compile="0" resource="0" file="Source/Parameters/Globals.h"/>
+        <FILE id="MTZMxv" name="Parameters.h" compile="0" resource="0" file="Source/Parameters/Parameters.h"/>
       </GROUP>
       <GROUP id="{8481574B-BF31-ED90-63F8-631E812630D4}" name="Library">
         <FILE id="umyzY8" name="CustomLookAndFeel.h" compile="0" resource="0"
@@ -27,6 +28,7 @@
         <FILE id="EpDACY" name="Random.h" compile="0" resource="0" file="Source/Library/Random.h"/>
       </GROUP>
       <GROUP id="{B2B899B3-11AF-8001-9C31-EC0270543615}" name="Components">
+        <FILE id="BwvVzR" name="Components.h" compile="0" resource="0" file="Source/Components/Components.h"/>
         <FILE id="a2niaN" name="FileBrowserSamples.h" compile="0" resource="0"
               file="Source/Components/FileBrowserSamples.h"/>
         <FILE id="BdbCKR" name="SampleDrawer.h" compile="0" resource="0" file="Source/Components/SampleDrawer.h"/>

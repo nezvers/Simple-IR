@@ -13,6 +13,7 @@
 #include "JuceHeader.h"
 #include "LowHighCutFilters.h"
 #include "../Parameters/Globals.h"
+#include "../Parameters/Parameters.h"
 #include <vector>
 #include "../LookAndFeel/FlatStyle1.h"
 
@@ -102,6 +103,7 @@ public:
     juce::TextButton buttonBypass;
     juce::TextButton buttonInvert;
     juce::ComboBox comboStereoMode;
+    juce::Label labelGain;
 #pragma endregion
 #pragma region Attachments
     using nSliderAttachment = std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>;
@@ -234,6 +236,14 @@ public:
             1.0f,
             0.5f
         };
+        const double intervalList[] = {
+            0.01,
+            0.01,
+            1,
+            1,
+            0.01,
+            1
+        };
         const float returnList[] = {
             1.0f,
             0.0f,
@@ -259,11 +269,11 @@ public:
             slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
             slider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 72, 32);
             slider.setSkewFactor(skewList[i], false);
-            slider.setRange(minList[i], maxList[i], 0.01);
+            slider.setRange(minList[i], maxList[i], intervalList[i]);
+            slider.setNumDecimalPlacesToDisplay(0);
             slider.setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::whitesmoke.withAlpha(0.25f));
             slider.setDoubleClickReturnValue(true, returnList[i], juce::ModifierKeys::ctrlModifier);
-            slider.setTextValueSuffix(suffixList[i]);
-            // TODO:lokAndFeel
+            //slider.setTextValueSuffix(suffixList[i]);
         }
     }
 
@@ -317,10 +327,39 @@ public:
     // Generates ValueTreeState parameters
     void setParameterLayout(std::vector <std::unique_ptr<juce::RangedAudioParameter>>& params) {
         DBG("setParameterLayout() " + suffix);
-        // TODO: figure out why attachments fails with selective layout creation
-        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_gain, name_gain, Parameters::gainMin, Parameters::gainMax, 0.0f));
-        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_lowCut, name_lowCut, Parameters::freqMin, Parameters::freqMax, Parameters::freqMin));
-        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_highCut, name_highCut, Parameters::freqMin, Parameters::freqMax, Parameters::freqMax));
+        
+        NormalisableRange<float> gainRange {Parameters::gainMin, Parameters::gainMax, 0.01f, 2.0f};
+        params.push_back(std::make_unique<juce::AudioParameterFloat>(
+            id_gain,
+            name_gain,
+            gainRange,
+            0.0f,
+            name_gain,
+            AudioProcessorParameter::genericParameter,
+            Parameters::valToStr::db(),
+            Parameters::strToVal::db()
+        ));
+        
+        params.push_back(std::make_unique<juce::AudioParameterFloat>(
+            id_lowCut, 
+            name_lowCut, 
+            Parameters::range::withCentre(20.0f, 20000.0f, 1000.0f),
+            Parameters::freqMin,
+            name_lowCut,
+            AudioProcessorParameter::genericParameter,
+            Parameters::valToStr::hz(),
+            Parameters::strToVal::hz()
+        ));
+        params.push_back(std::make_unique<juce::AudioParameterFloat>(
+            id_highCut, 
+            name_highCut, 
+            Parameters::range::withCentre(20.0f, 20000.0f, 1000.0f),
+            Parameters::freqMax,
+            name_highCut,
+            AudioProcessorParameter::genericParameter,
+            Parameters::valToStr::hz(),
+            Parameters::strToVal::hz()
+        ));
         
         if (is_output)
         {
