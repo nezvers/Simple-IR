@@ -16,6 +16,7 @@
 #include "../Parameters/Parameters.h"
 #include <vector>
 #include "../LookAndFeel/FlatStyle1.h"
+#include "../Components/SliderWithLabel.h"
 
 class ProcessorGroup {
 public:
@@ -94,16 +95,15 @@ public:
     std::atomic<float>* valueStereoMode = nullptr;
 #pragma endregion
 #pragma region Components
-    juce::Slider sliderMix;//
-    juce::Slider sliderGain;
-    juce::Slider sliderLowCut;
-    juce::Slider sliderHighCut;
-    juce::Slider sliderPan;
-    juce::Slider sliderDelay;
+    SliderWithLabel sliderMix;//
+    SliderWithLabel sliderGain;
+    SliderWithLabel sliderLowCut;
+    SliderWithLabel sliderHighCut;
+    SliderWithLabel sliderPan;
+    SliderWithLabel sliderDelay;
     juce::TextButton buttonBypass;
     juce::TextButton buttonInvert;
     juce::ComboBox comboStereoMode;
-    juce::Label labelGain;
 #pragma endregion
 #pragma region Attachments
     using nSliderAttachment = std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>;
@@ -196,7 +196,7 @@ public:
     void initSliders()
     {
         DBG("Init Sliders ");
-        juce::Slider* sliderList[] = {
+        SliderWithLabel* sliderList[] = {
             &sliderMix,
             &sliderGain,
             &sliderLowCut,
@@ -263,7 +263,7 @@ public:
 
         enum { MIX, GAIN, LOWCUT, HIGHCUT, PAN, DELAY, COUNT };
         for (int i = 0; i < COUNT; i++) {
-            juce::Slider& slider = *sliderList[i];
+            SliderWithLabel& slider = *sliderList[i];
             slider.setLookAndFeel(&lookAndFeel);
             slider.setName(nameList[i]);
             slider.setSliderStyle(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag);
@@ -273,6 +273,7 @@ public:
             slider.setNumDecimalPlacesToDisplay(0);
             slider.setColour(juce::Slider::ColourIds::trackColourId, juce::Colours::whitesmoke.withAlpha(0.25f));
             slider.setDoubleClickReturnValue(true, returnList[i], juce::ModifierKeys::ctrlModifier);
+            slider.label.setText(nameList[i], juce::NotificationType::dontSendNotification);
             //slider.setTextValueSuffix(suffixList[i]);
         }
     }

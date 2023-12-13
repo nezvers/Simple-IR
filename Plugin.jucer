@@ -32,6 +32,8 @@
         <FILE id="a2niaN" name="FileBrowserSamples.h" compile="0" resource="0"
               file="Source/Components/FileBrowserSamples.h"/>
         <FILE id="BdbCKR" name="SampleDrawer.h" compile="0" resource="0" file="Source/Components/SampleDrawer.h"/>
+        <FILE id="lpyYz4" name="SliderWithLabel.h" compile="0" resource="0"
+              file="Source/Components/SliderWithLabel.h"/>
       </GROUP>
       <GROUP id="{C086AF3A-F90F-2376-A153-53E13AD00481}" name="Assets">
         <FILE id="naRhnC" name="bypass.svg" compile="0" resource="1" file="Source/Assets/bypass.svg"/>

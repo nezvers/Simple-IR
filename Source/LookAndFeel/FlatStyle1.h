@@ -27,7 +27,7 @@ struct FlatStyle1 : public LookAndFeel_V4
         int textBoxWidth = centreX * 1.4f;
         int textBoxHeight = centreY * 0.4f;
         layout.textBoxBounds.setX(centreX - textBoxWidth * 0.5f);
-        layout.textBoxBounds.setY(centreY - textBoxHeight * 0.5f);
+        layout.textBoxBounds.setY(centreY - textBoxHeight);
         layout.textBoxBounds.setWidth(textBoxWidth);
         layout.textBoxBounds.setHeight(textBoxHeight);
 
