@@ -17,6 +17,7 @@
 #include <vector>
 #include "../LookAndFeel/FlatStyle1.h"
 #include "../Components/SliderWithLabel.h"
+#include "../Components/ButtonSvg.h"
 
 class ProcessorGroup {
 public:
@@ -40,9 +41,13 @@ public:
             name_gain = "Output";
             name_pan = "Reverb";
             name_bypass = "Bypass";
+            buttonBypass.setSvg(BinaryData::enable_on_svg);
+            buttonInvert.setSvg(BinaryData::phase_classic_svg);
         }
         else {
             name_bypass = "S";
+            buttonBypass.setSvg(BinaryData::solo_svg);
+            buttonInvert.setSvg(BinaryData::phase_classic_svg);
         }
     };
     ~ProcessorGroup() {
@@ -101,8 +106,8 @@ public:
     SliderWithLabel sliderHighCut;
     SliderWithLabel sliderPan;
     SliderWithLabel sliderDelay;
-    juce::TextButton buttonBypass;
-    juce::TextButton buttonInvert;
+    ButtonSvg buttonBypass;
+    ButtonSvg buttonInvert;
     juce::ComboBox comboStereoMode;
 #pragma endregion
 #pragma region Attachments
@@ -281,8 +286,8 @@ public:
     void initButtons()
     {
         DBG("Init Buttons " + suffix);
-        buttonBypass.setButtonText(name_bypass);
-        buttonInvert.setButtonText(name_invert);
+        //buttonBypass.setButtonText(name_bypass);
+        //buttonInvert.setButtonText(name_invert);
 
         buttonBypass.setToggleable(true);
         buttonInvert.setToggleable(true);

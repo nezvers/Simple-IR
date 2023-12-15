@@ -28,6 +28,7 @@
         <FILE id="EpDACY" name="Random.h" compile="0" resource="0" file="Source/Library/Random.h"/>
       </GROUP>
       <GROUP id="{B2B899B3-11AF-8001-9C31-EC0270543615}" name="Components">
+        <FILE id="dpksNV" name="ButtonSvg.h" compile="0" resource="0" file="Source/Components/ButtonSvg.h"/>
         <FILE id="BwvVzR" name="Components.h" compile="0" resource="0" file="Source/Components/Components.h"/>
         <FILE id="a2niaN" name="FileBrowserSamples.h" compile="0" resource="0"
               file="Source/Components/FileBrowserSamples.h"/>
@@ -39,10 +40,10 @@
         <FILE id="naRhnC" name="bypass.svg" compile="0" resource="1" file="Source/Assets/bypass.svg"/>
         <FILE id="PsEkVK" name="Collection.svg" compile="0" resource="1" file="Source/Assets/Collection.svg"/>
         <FILE id="oMkDXY" name="delay.svg" compile="0" resource="1" file="Source/Assets/delay.svg"/>
-        <FILE id="pOQxjZ" name="phase_bypass_off.svg" compile="0" resource="1"
-              file="Source/Assets/phase_bypass_off.svg"/>
-        <FILE id="YuZq4i" name="phase_bypass_on.svg" compile="0" resource="1"
-              file="Source/Assets/phase_bypass_on.svg"/>
+        <FILE id="lhCF6A" name="enable_off.svg" compile="0" resource="1" file="Source/Assets/enable_off.svg"/>
+        <FILE id="qcT6sf" name="enable_on.svg" compile="0" resource="1" file="Source/Assets/enable_on.svg"/>
+        <FILE id="NYPLNX" name="phase_classic.svg" compile="0" resource="1"
+              file="Source/Assets/phase_classic.svg"/>
         <FILE id="vgMs5S" name="phase_invert_cross.svg" compile="0" resource="1"
               file="Source/Assets/phase_invert_cross.svg"/>
         <FILE id="EsFT7J" name="phase_invert_cross_cut.svg" compile="0" resource="1"
@@ -55,6 +56,7 @@
               file="Source/Assets/phase_stereo_layered.svg"/>
         <FILE id="j5k2Lu" name="phase_stereo_wave_overlap.svg" compile="0"
               resource="1" file="Source/Assets/phase_stereo_wave_overlap.svg"/>
+        <FILE id="Qtc1oq" name="solo.svg" compile="0" resource="1" file="Source/Assets/solo.svg"/>
         <FILE id="dHyfcJ" name="volume.svg" compile="0" resource="1" file="Source/Assets/volume.svg"/>
         <FILE id="tatj43" name="volume_off.svg" compile="0" resource="1" file="Source/Assets/volume_off.svg"/>
       </GROUP>

@@ -9,7 +9,7 @@
    version="1.1"
    id="svg2"
    sodipodi:docname="bypass.svg"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -25,8 +25,8 @@
      inkscape:deskcolor="#d1d1d1"
      showguides="true"
      inkscape:zoom="1.630765"
-     inkscape:cx="474.31726"
-     inkscape:cy="317.33573"
+     inkscape:cx="602.17137"
+     inkscape:cy="308.13759"
      inkscape:window-width="3840"
      inkscape:window-height="2080"
      inkscape:window-x="3829"
@@ -43,36 +43,33 @@
          offset="0"
          id="stop8" />
     </linearGradient>
-    <marker
-       style="overflow:visible"
-       refX="0"
-       refY="0"
-       orient="auto-start-reverse"
-       inkscape:stockid="Triangle2182"
-       markerWidth="0.5"
-       markerHeight="0.7"
-       viewBox="0 0 1 1"
-       inkscape:isstock="true"
-       inkscape:collect="always"
-       preserveAspectRatio="none"
-       markerUnits="userSpaceOnUse"
-       id="Triangle2182">
-      <path
-         transform="scale(0.5)"
-         style="fill:#ffffff;fill-rule:evenodd;stroke:#ffffff;stroke-width:1pt"
-         d="M 5.77,0 -2.88,5 V -5 Z"
-         id="path11" />
-    </marker>
   </defs>
   <circle
-     style="fill:#ffffff;stroke-width:0.03;fill-opacity:1"
+     style="fill:#ffffff;fill-opacity:1;stroke-width:0.0394771"
      id="path2"
-     cx="12"
-     cy="12"
-     r="4.0655766" />
-  <path
-     style="fill:none;stroke:#ffffff;stroke-width:1.617;stroke-opacity:1;marker-end:url(#Triangle2182);stroke-dasharray:none;fill-opacity:1"
-     d="m 2.2995343,12.031163 3.6240659,-0.0184 c 0,-3.3523523 2.7217294,-6.0891668 5.8868078,-6.0891668 3.664772,0 6.254733,2.7947649 6.254733,6.1075628 h 3.476896"
-     id="path3"
-     sodipodi:nodetypes="ccccc" />
+     cx="-0.56044048"
+     cy="17.178612"
+     r="5.3499088"
+     transform="matrix(0.71213818,-0.70203932,0.71213818,0.70203932,0,0)" />
+  <g
+     id="path3">
+    <path
+       style="color:#000000;fill:#ffffff;-inkscape-stroke:none"
+       d="M 20.011719,2.9257813 17.351562,5.546875 C 13.822976,2.8144563 8.7023363,2.7911168 5.1699219,6.2734375 2.0266555,9.3721299 1.9614579,14.422745 4.7480469,17.945312 L 1.9765625,20.705078 3.4785156,22.212891 7.6171875,18.089844 6.8535156,17.335937 C 4.1220319,14.643189 4.1347412,10.282516 6.6640625,7.7890625 9.7132057,4.7831598 14.044296,4.9811595 16.753906,7.6523437 l 0.748047,0.7363282 4.003906,-3.9492188 z"
+       id="path7" />
+    <g
+       id="g2">
+      <g
+         id="path4">
+        <path
+           style="color:#000000;fill:#ffffff;fill-rule:evenodd;-inkscape-stroke:none"
+           d="M 21.786524,2.6701184 21.475095,5.4345203 19.017957,2.9420371 Z"
+           id="path5" />
+        <path
+           style="color:#000000;fill:#ffffff;fill-rule:evenodd;-inkscape-stroke:none"
+           d="M 22.009766,2.4492188 18.587891,2.7871094 21.625,5.8671875 Z M 21.5625,2.890625 21.326172,5.0019531 19.449219,3.0976563 Z"
+           id="path6" />
+      </g>
+    </g>
+  </g>
 </svg>

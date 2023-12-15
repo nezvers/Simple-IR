@@ -8,8 +8,8 @@
    viewBox="0 0 24 24"
    version="1.1"
    id="svg2"
-   sodipodi:docname="phase_bypass_on.svg"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="solo.svg"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -24,9 +24,9 @@
      inkscape:pagecheckerboard="1"
      inkscape:deskcolor="#d1d1d1"
      showguides="true"
-     inkscape:zoom="1.630765"
-     inkscape:cx="506.81735"
-     inkscape:cy="387.85478"
+     inkscape:zoom="0.8153825"
+     inkscape:cx="615.66197"
+     inkscape:cy="283.91583"
      inkscape:window-width="3840"
      inkscape:window-height="2080"
      inkscape:window-x="3829"
@@ -53,6 +53,12 @@
   </sodipodi:namedview>
   <defs
      id="defs2">
+    <rect
+       x="0"
+       y="0"
+       width="799.99998"
+       height="799.99998"
+       id="rect1" />
     <inkscape:path-effect
        effect="powermask"
        id="path-effect30"
@@ -160,6 +166,10 @@
     <mask
        maskUnits="userSpaceOnUse"
        id="mask-powermask-path-effect21">
+      <path
+         id="mask-powermask-path-effect21_box"
+         style="fill:#ffffff;fill-opacity:1"
+         d="M 11.011769,2.7544052 H 23.513523 V 21.525178 H 11.011769 Z" />
       <path
          id="path21"
          style="fill:#ffffff;fill-opacity:1"
@@ -392,14 +402,10 @@
          in="fbSourceGraphic" />
     </filter>
   </defs>
-  <circle
-     style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:1.65;stroke-dasharray:none;stroke-opacity:1"
-     id="path34"
-     cx="12"
-     cy="12"
-     r="8.8670044" />
   <path
-     style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:1.5162;stroke-dasharray:none;stroke-opacity:1"
-     d="M 12,4.4483296 V 19.547071"
-     id="path35" />
+     d="m 16.899573,3.6086069 c 0,0 -0.624609,-0.357534 -0.958828,-0.4872558 C 15.626761,2.999483 15.294584,2.9298889 14.967016,2.8515467 14.684661,2.7840178 14.400551,2.7211909 14.113287,2.6791933 13.760112,2.6275596 13.403768,2.573136 13.046943,2.581742 12.118577,2.6041326 11.062034,2.7107404 10.288044,2.9687369 9.5223762,3.2267337 8.8940297,3.5679553 8.4030038,3.9924012 7.9119779,4.4085248 7.5499504,4.8870668 7.3169211,5.4280275 7.083892,5.9689882 6.9673774,6.5182716 6.9673774,7.0758778 c 0,0.64083 0.1206757,1.1942745 0.3620274,1.6603322 0.2496742,0.4660591 0.5742506,0.8738595 0.9737293,1.223404 0.3994786,0.341221 0.8530534,0.64083 1.3607242,0.898826 0.5159937,0.249675 1.0403087,0.482705 1.6023097,0.717115 0.545355,0.217765 1.069671,0.425826 1.602309,0.64221 0.532638,0.216385 1.052792,0.453575 1.560463,0.711572 0.515994,0.257996 0.97373,0.565928 1.373208,0.923795 0.399479,0.349544 0.719893,0.761505 0.961246,1.235886 0.249674,0.474381 0.374512,1.036148 0.374512,1.685301 0,0.77399 -0.158129,1.452271 -0.474381,2.034845 -0.316254,0.582572 -0.757346,1.069438 -1.323274,1.460594 -0.565928,0.382833 -1.330638,0.67557 -2.047329,0.861375 -0.850953,0.220613 -1.742504,0.291588 -2.621578,0.287125 -0.476144,-0.0024 -0.9527604,-0.07 -1.4183059,-0.16993 C 8.7899571,21.148927 8.3375438,20.99778 7.897151,20.823485 7.4733983,20.655776 7.048078,20.477284 6.6661011,20.228715 6.3299999,20.01 5.9399999,19.68 5.7173392,19.536492"
+     id="text1"
+     style="font-size:666.667px;font-family:Consolas;-inkscape-font-specification:Consolas;white-space:pre;fill:none;stroke:#ffffff;stroke-width:1.65;stroke-dasharray:none;stroke-dashoffset:15"
+     aria-label="S"
+     sodipodi:nodetypes="caaaaccssccccscccsscaaaasc" />
 </svg>
