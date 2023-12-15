@@ -26,6 +26,7 @@
         <FILE id="vhIeoN" name="ProcessorGroup.h" compile="0" resource="0"
               file="Source/Library/ProcessorGroup.h"/>
         <FILE id="EpDACY" name="Random.h" compile="0" resource="0" file="Source/Library/Random.h"/>
+        <FILE id="nGSrqY" name="SvgUtility.h" compile="0" resource="0" file="Source/Library/SvgUtility.h"/>
       </GROUP>
       <GROUP id="{B2B899B3-11AF-8001-9C31-EC0270543615}" name="Components">
         <FILE id="dpksNV" name="ButtonSvg.h" compile="0" resource="0" file="Source/Components/ButtonSvg.h"/>
