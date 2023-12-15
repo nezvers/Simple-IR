@@ -171,7 +171,7 @@ void PluginAudioProcessorEditor::resized()
     audioProcessor.procOut.sliderLowCut.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
     audioProcessor.procOut.sliderHighCut.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
     audioProcessor.procOut.sliderPan.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
-    audioProcessor.procOut.buttonBypass.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
+    //audioProcessor.procOut.buttonBypass.setBounds(_centerKnobBounds.removeFromTop(kh).expanded(-5, -5));
 
     
     auto ftr_1 = _footerBounds.removeFromLeft(kw);
@@ -184,7 +184,9 @@ void PluginAudioProcessorEditor::resized()
     //labelReverb.setBounds(ftr_2.expanded(-5, -5));
 
     auto ftr_3 = _footerBounds.removeFromLeft(kw);
-    //audioProcessor.procOut.buttonBypass.setBounds(ftr_3.removeFromLeft(ftr_3.getWidth() / 2).expanded(-5, -5));
+    auto rectBypassOut = ftr_3.removeFromLeft(ftr_3.getWidth() / 2);
+    rectBypassOut.setX(rectBypassOut.getX() + rectBypassOut.getWidth() / 2);
+    audioProcessor.procOut.buttonBypass.setBounds(rectBypassOut.expanded(-5, -5));
     //audioProcessor.procOut.buttonInvert.setBounds(ftr_3.expanded(-5, -5));
 
     auto ftr_4 = _footerBounds.removeFromLeft(_rightFileBounds.getWidth());;
