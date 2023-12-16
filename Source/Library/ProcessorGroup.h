@@ -218,19 +218,19 @@ public:
             name_delay
         };
         float minList[] = {
-            Parameters::panMin,
+            0.0f,
             Parameters::gainMin,
             Parameters::freqMin,
             Parameters::freqMin,
-            Parameters::panMin,
+            -100.0f,
             Parameters::delayMin
         };
         float maxList[] = {
-            Parameters::panMax,
+            1.0f,
             Parameters::gainMax,
             Parameters::freqMax,
             Parameters::freqMax,
-            Parameters::panMax,
+            100.0f,
             Parameters::delayMax
         };
         const float skewList[] = {
@@ -241,7 +241,7 @@ public:
             1.0f,
             0.5f
         };
-        const double intervalList[] = {
+        double intervalList[] = {
             0.01,
             0.01,
             1,
@@ -249,12 +249,12 @@ public:
             0.01,
             1
         };
-        const float returnList[] = {
+        float returnList[] = {
             1.0f,
             0.0f,
             20.0f,
             20000.0f,
-            0.5f,
+            0.0f,
             0.0f
         };
         const juce::String suffixList[] = {
@@ -266,6 +266,11 @@ public:
             ""
         };
 
+        if (is_output) {
+            minList[4] = 0.0f;
+            maxList[4] = 1.0f;
+            returnList[4] = 0.0f;
+        }
         enum { MIX, GAIN, LOWCUT, HIGHCUT, PAN, DELAY, COUNT };
         for (int i = 0; i < COUNT; i++) {
             SliderWithLabel& slider = *sliderList[i];
@@ -369,19 +374,52 @@ public:
         
         if (is_output)
         {
-            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_mix, name_mix, Parameters::panMin, Parameters::panMax, 1.0f));
-            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_pan, name_pan, Parameters::panMin, Parameters::panMax, 0.0f));
+            params.push_back(std::make_unique<juce::AudioParameterFloat>(
+                id_mix, name_mix, 
+                Parameters::range::lin(0.0f, 1.0f),
+                0.0f,
+                name_mix,
+                AudioProcessorParameter::genericParameter,
+                Parameters::valToStr::mix(),
+                Parameters::strToVal::mix()
+            ));
+            params.push_back(std::make_unique<juce::AudioParameterFloat>(
+                id_pan, name_pan, 
+                Parameters::range::lin(0.0f, 1.0f),
+                0.0f,
+                name_pan,
+                AudioProcessorParameter::genericParameter,
+                Parameters::valToStr::mix(),
+                Parameters::strToVal::mix()
+            ));
         }
         else 
         {
-            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_mix, name_mix, Parameters::panMin, Parameters::panMax, 0.5f));
-            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_pan, name_pan, Parameters::panMin, Parameters::panMax, 0.5f));
-            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_delay, name_delay, Parameters::panMin, Parameters::panMax, 0.0f));
+            params.push_back(std::make_unique<juce::AudioParameterFloat>(
+                id_pan, 
+                name_pan, 
+                Parameters::range::lin(0.0f, 1.0f),
+                0.5f,
+                name_pan,
+                AudioProcessorParameter::genericParameter,
+                Parameters::valToStr::pan(),
+                Parameters::strToVal::pan()
+            ));
+            params.push_back(std::make_unique<juce::AudioParameterFloat>(
+                id_mix, name_mix, 
+                Parameters::range::lin(0.0f, 1.0f),
+                0.5f,
+                name_mix,
+                AudioProcessorParameter::genericParameter,
+                Parameters::valToStr::mix(),
+                Parameters::strToVal::mix()
+            ));
+            params.push_back(std::make_unique<juce::AudioParameterFloat>(id_delay, name_delay, 0.0f, 512.0f, 0.0f));
         }
 
         params.push_back(std::make_unique<juce::AudioParameterChoice>(id_stereoMode, name_stereoMode, StringArray("Dual Mono", "Stereo", "Mono"), 0));
-        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_invert, name_invert, Parameters::panMin, Parameters::panMax, 0.0f));
-        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_bypass, name_bypass, Parameters::panMin, Parameters::panMax, 0.0f));
+        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_invert, name_invert, 0.0f, 1.0f, 0.0f));
+        params.push_back(std::make_unique<juce::AudioParameterFloat>(id_bypass, name_bypass, 0.0f, 1.0f, 0.0f));
     }
 
     // LOAD

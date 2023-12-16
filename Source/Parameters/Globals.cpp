@@ -26,8 +26,8 @@ const juce::AudioParameterBoolAttributes buttonAtributes = AudioParameterBoolAtt
 
 const float gainMin = -125.0f;
 const float gainMax = 30.0f;
-const float panMin = 0.0f;
-const float panMax = 1.0f;
+const float panMin = -1000.0f;
+const float panMax = 100.0f;
 const float boolMin = 0.0f;
 const float boolMax = 1.0f;
 const float freqMin = 20.0f;

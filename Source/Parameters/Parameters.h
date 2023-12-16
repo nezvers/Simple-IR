@@ -153,6 +153,26 @@ namespace Parameters {
 				return String();
 			};
 		}
+
+		inline ValueToString pan() {
+			return [](float val, int) {
+				if (val < 0.5f) {
+					return String((1.0f - val / 0.5f) * 100.0f, 2) + " L";
+				}
+				else if (val > 0.5f) {
+					return String((val - 0.5f) / 0.5f * 100.0f, 2) + " R";
+				}
+				else {
+					return String("C");
+				}
+			};
+		}
+
+		inline ValueToString mix() {
+			return [](float val, int) {
+				return String((float)juce::roundFloatToInt(val * 100.0f), 0) + " %";
+			};
+		}
 	}
 
 	namespace strToVal
@@ -176,6 +196,32 @@ namespace Parameters {
 					return s.getFloatValue() * 1000.f;
 				}
 				return s.getFloatValue();
+			};
+		}
+
+		inline StringToValue pan() {
+			return [](const String& str) {
+				if (str.endsWith(" L")) {
+					juce::String s = str.removeCharacters(" L");
+					float val = s.getFloatValue();
+					return (1.0f - (val / 100.0f)) * 0.5f;
+				}
+				else if (str.endsWith(" R")) {
+					juce::String s = str.removeCharacters(" L");
+					float val = s.getFloatValue();
+					return (val / 100.0f) * 0.5f + 0.5f;
+				}
+				else {
+					return 0.5f;
+				}
+			};
+		}
+
+		inline StringToValue mix() {
+			return [](const String& str) {
+				juce::String s = str.removeCharacters(" %");
+				float val = s.getFloatValue();
+				return (val * 0.01f);
 			};
 		}
 	}
