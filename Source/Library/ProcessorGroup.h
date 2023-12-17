@@ -138,6 +138,7 @@ public:
     juce::ValueTree* variableTree = nullptr;
     juce::AudioProcessorValueTreeState* valueTreeState = nullptr;
     Parameters::enumStereo stereoMode = Parameters::enumStereo::DUAL_MONO;
+
     bool is_output = false;
     ProcessorGroup* other = nullptr;
     FlatStyle1 lookAndFeel;
@@ -454,6 +455,7 @@ public:
         filterHighCut.filterFrequency = valueHighCut->load();
         pan.setWetMixProportion(valuePan->load());
         if (is_output) {
+            stereoMode = Parameters::enumStereo(int(valueStereoMode->load()));
             // valueStereoMode->load();
             
         }
@@ -542,6 +544,12 @@ public:
         mix.pushDrySamples(contextLeft.getOutputBlock());
         mix.mixWetSamples(context.getOutputBlock());
         gain.process(context);
+
+        switch (stereoMode) {
+        case Parameters::DUAL_MONO:
+        case Parameters::STEREO:
+        case Parameters::MONO:
+        }
 
         /*
         // TODO: Pan

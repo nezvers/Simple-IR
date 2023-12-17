@@ -23,8 +23,13 @@
               file="Source/Library/LowHighCutFilters.h"/>
         <FILE id="MhgQ71" name="OneShotTimerCallback.h" compile="0" resource="0"
               file="Source/Library/OneShotTimerCallback.h"/>
+        <FILE id="oe471k" name="ProcessorBase.h" compile="0" resource="0" file="Source/Library/ProcessorBase.h"/>
         <FILE id="vhIeoN" name="ProcessorGroup.h" compile="0" resource="0"
               file="Source/Library/ProcessorGroup.h"/>
+        <FILE id="AUqjzj" name="ProcessorLeft.h" compile="0" resource="0" file="Source/Library/ProcessorLeft.h"/>
+        <FILE id="LYixRw" name="ProcessorOut.h" compile="0" resource="0" file="Source/Library/ProcessorOut.h"/>
+        <FILE id="VYcEl9" name="ProcessorRight.h" compile="0" resource="0"
+              file="Source/Library/ProcessorRight.h"/>
         <FILE id="EpDACY" name="Random.h" compile="0" resource="0" file="Source/Library/Random.h"/>
         <FILE id="nGSrqY" name="SvgUtility.h" compile="0" resource="0" file="Source/Library/SvgUtility.h"/>
       </GROUP>

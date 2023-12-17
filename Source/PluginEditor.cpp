@@ -69,7 +69,7 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
 
 PluginAudioProcessorEditor::~PluginAudioProcessorEditor()
 {
-    
+    DBG("Editor CLOSE");
 }
 
 //==============================================================================
