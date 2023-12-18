@@ -546,9 +546,12 @@ public:
         gain.process(context);
 
         switch (stereoMode) {
-        case Parameters::DUAL_MONO:
-        case Parameters::STEREO:
-        case Parameters::MONO:
+            case Parameters::DUAL_MONO:
+                break;
+            case Parameters::STEREO:
+                break;
+            case Parameters::MONO:
+                break;
         }
 
         /*

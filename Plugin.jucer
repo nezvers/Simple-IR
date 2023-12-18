@@ -31,6 +31,7 @@
         <FILE id="VYcEl9" name="ProcessorRight.h" compile="0" resource="0"
               file="Source/Library/ProcessorRight.h"/>
         <FILE id="EpDACY" name="Random.h" compile="0" resource="0" file="Source/Library/Random.h"/>
+        <FILE id="pzqq7U" name="SignalBlend.h" compile="0" resource="0" file="Source/Library/SignalBlend.h"/>
         <FILE id="nGSrqY" name="SvgUtility.h" compile="0" resource="0" file="Source/Library/SvgUtility.h"/>
       </GROUP>
       <GROUP id="{B2B899B3-11AF-8001-9C31-EC0270543615}" name="Components">
