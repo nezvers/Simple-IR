@@ -67,6 +67,9 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     //auto totalNumInputChannels  = getTotalNumInputChannels();
     //auto totalNumOutputChannels = getTotalNumOutputChannels();
     
+    procOut.process_output(buffer, procLeft, procRight);
+
+    /*
     for (int i = 0; i < 3; i++) {
         procGroup[i].updateParameters();
     }
@@ -74,8 +77,9 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     juce::dsp::AudioBlock<float> audioBlock = {buffer};
     juce::dsp::ProcessContextReplacing<float> context = juce::dsp::ProcessContextReplacing<float>(audioBlock);
 
-    procLeft.process(context, buffer);
-    procRight.process(context, buffer);
+
+    procLeft.process(buffer);
+    procRight.process(buffer);
     juce::dsp::AudioBlock<float> audioBlockLeft = { procLeft.buffer };
     juce::dsp::AudioBlock<float> audioBlockRight = { procRight.buffer };
     juce::dsp::ProcessContextReplacing<float> contextLeft = juce::dsp::ProcessContextReplacing<float>(audioBlockLeft);
@@ -84,6 +88,7 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     procOut.process_combine(contextLeft, contextRight, procLeft.buffer, procRight.buffer);
 
     buffer.makeCopyOf(procOut.buffer);
+    */
 }
 
 

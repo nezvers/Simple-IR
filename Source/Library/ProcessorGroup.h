@@ -88,6 +88,7 @@ public:
     const juce::String name_invert = "P";
     const juce::String name_stereoMode = "Stereo Mode";
 #pragma endregion
+
 #pragma region value links
     std::atomic<float>* valueMix = nullptr;
     std::atomic<float>* valueGain = nullptr;
@@ -99,6 +100,7 @@ public:
     std::atomic<float>* valueInvert = nullptr;
     std::atomic<float>* valueStereoMode = nullptr;
 #pragma endregion
+
 #pragma region Components
     SliderWithLabel sliderMix;//
     SliderWithLabel sliderGain;
@@ -110,6 +112,7 @@ public:
     ButtonSvg buttonInvert;
     juce::ComboBox comboStereoMode;
 #pragma endregion
+
 #pragma region Attachments
     using nSliderAttachment = std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment>;
     using nButtonAttachment = std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment>;
@@ -125,34 +128,45 @@ public:
     nButtonAttachment attachmentInvert;
     nComboBoxAttachment attachmentStereoMode;
 #pragma endregion
+
 #pragma region DSP
     juce::dsp::DryWetMixer<float> mix;
     juce::dsp::DryWetMixer<float> pan;
     juce::dsp::Gain<float> gain;
     juce::dsp::Convolution convolution;
-    LowHighCutFilters filterLowCut;
-    LowHighCutFilters filterHighCut;
+    //LowHighCutFilters filterLowCut;
+    //LowHighCutFilters filterHighCut;
+    using DublicatedFilter = juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>>;
+    DublicatedFilter filterLowCut { juce::dsp::IIR::Coefficients<float>::makeHighPass(44100, 20.0f, 1.0f) };
+    DublicatedFilter filterHighCut { juce::dsp::IIR::Coefficients<float>::makeLowPass(44100, 20000.0f, 1.0f) };
+
     juce::AudioBuffer<float> buffer;
     juce::File file = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
     juce::File directory = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
     juce::ValueTree* variableTree = nullptr;
     juce::AudioProcessorValueTreeState* valueTreeState = nullptr;
     Parameters::enumStereo stereoMode = Parameters::enumStereo::DUAL_MONO;
-
     bool is_output = false;
     ProcessorGroup* other = nullptr;
     FlatStyle1 lookAndFeel;
+    juce::dsp::ProcessSpec spec;
 #pragma endregion
 
     // Initializes DSP
-    void setSpec(juce::dsp::ProcessSpec& spec) {
+    void setSpec(juce::dsp::ProcessSpec& _spec) {
+        spec = _spec;
         gain.prepare(spec);
         mix.prepare(spec);
         pan.prepare(spec);
         convolution.prepare(spec);
         gain.setRampDurationSeconds(0.01);
-        filterLowCut.type = LowHighCutFilters::LOWCUT;
-        filterHighCut.type = LowHighCutFilters::HIGHCUT;
+        //filterLowCut.type = LowHighCutFilters::LOWCUT;
+        //filterHighCut.type = LowHighCutFilters::HIGHCUT;
+        filterLowCut.prepare(spec);
+        filterHighCut.prepare(spec);
+        
+        filterLowCut.reset();
+        filterHighCut.reset();
     }
 
     void init(juce::AudioProcessorValueTreeState* vts) {
@@ -339,6 +353,7 @@ public:
     // Generates ValueTreeState parameters
     void setParameterLayout(std::vector <std::unique_ptr<juce::RangedAudioParameter>>& params) {
         DBG("setParameterLayout() " + suffix);
+        //tree.createAndAddParameter("id", "name", ...)
         
         NormalisableRange<float> gainRange {Parameters::gainMin, Parameters::gainMax, 0.01f, 2.0f};
         params.push_back(std::make_unique<juce::AudioParameterFloat>(
@@ -451,8 +466,11 @@ public:
     void updateParameters() {
         mix.setWetMixProportion(valueMix->load());
         gain.setGainDecibels(valueGain->load());
-        filterLowCut.filterFrequency = valueLowCut->load();
-        filterHighCut.filterFrequency = valueHighCut->load();
+        //filterLowCut.filterFrequency = valueLowCut->load();
+        //filterHighCut.filterFrequency = valueHighCut->load();
+        *filterLowCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass((int)spec.sampleRate, valueLowCut->load(), 1.0f);
+        *filterHighCut.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass((int)spec.sampleRate, valueHighCut->load(), 1.0f);
+        
         pan.setWetMixProportion(valuePan->load());
         if (is_output) {
             stereoMode = Parameters::enumStereo(int(valueStereoMode->load()));
@@ -511,6 +529,53 @@ public:
     }
 
     void process(
+        juce::AudioBuffer<float> outputBuffer) {
+        updateParameters();
+
+        buffer.makeCopyOf(outputBuffer, true); // Copy dry buffer
+        juce::dsp::AudioBlock<float> audioBlock = { buffer };
+        juce::dsp::ProcessContextReplacing<float> context = juce::dsp::ProcessContextReplacing<float>(audioBlock);
+
+        if (convolution.getCurrentIRSize() > 0) {
+            convolution.process(context);
+        }
+
+        mix.pushDrySamples(outputBuffer);
+        mix.mixWetSamples(audioBlock);
+        gain.process(context);
+        filterLowCut.process(context);
+        filterHighCut.process(context);
+    }
+
+    void process_output(juce::AudioBuffer<float> outputBuffer, ProcessorGroup& procLeft, ProcessorGroup& procRight) {
+        updateParameters();
+
+        procLeft.process(outputBuffer);
+        procRight.process(outputBuffer);
+
+        mix.pushDrySamples(procLeft.buffer);
+        mix.mixWetSamples(procRight.buffer); // Right buffer holds IR mix
+
+        outputBuffer.makeCopyOf(procRight.buffer, true); // Copy dry buffer
+        juce::dsp::AudioBlock<float> audioBlockOut = { outputBuffer };
+        juce::dsp::ProcessContextReplacing<float> contextOut = juce::dsp::ProcessContextReplacing<float>(audioBlockOut);
+
+        if (convolution.getCurrentIRSize() > 0) {
+            convolution.process(contextOut);
+        }
+
+        // It's Reverb mix for output WIP
+        pan.pushDrySamples(procRight.buffer);
+        pan.mixWetSamples(outputBuffer);
+
+        gain.process(contextOut);
+        filterLowCut.process(contextOut);
+        filterHighCut.process(contextOut);
+        /*
+        */
+    }
+
+    void _process(
         juce::dsp::ProcessContextReplacing<float> inputContext, 
         juce::AudioBuffer<float> outputBuffer )
     {
