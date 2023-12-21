@@ -150,6 +150,11 @@ public:
     ProcessorGroup* other = nullptr;
     FlatStyle1 lookAndFeel;
     juce::dsp::ProcessSpec spec;
+    bool isDualMono;
+    bool isStereo = true;
+    bool isMono;
+    ProcessorGroup* procLeft; // only for output
+    ProcessorGroup* procRight; // only for output
 #pragma endregion
 
     // Initializes DSP
@@ -160,8 +165,7 @@ public:
         pan.prepare(spec);
         convolution.prepare(spec);
         gain.setRampDurationSeconds(0.01);
-        //filterLowCut.type = LowHighCutFilters::LOWCUT;
-        //filterHighCut.type = LowHighCutFilters::HIGHCUT;
+
         filterLowCut.prepare(spec);
         filterHighCut.prepare(spec);
         
@@ -466,16 +470,25 @@ public:
     void updateParameters() {
         mix.setWetMixProportion(valueMix->load());
         gain.setGainDecibels(valueGain->load());
-        //filterLowCut.filterFrequency = valueLowCut->load();
-        //filterHighCut.filterFrequency = valueHighCut->load();
         *filterLowCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass((int)spec.sampleRate, valueLowCut->load(), 1.0f);
         *filterHighCut.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass((int)spec.sampleRate, valueHighCut->load(), 1.0f);
         
         pan.setWetMixProportion(valuePan->load());
         if (is_output) {
             stereoMode = Parameters::enumStereo(int(valueStereoMode->load()));
-            // valueStereoMode->load();
-            
+            int value = (int)valueStereoMode->load();
+            isDualMono = value == 0;
+            isStereo = value == 1;
+            isMono = value == 2;
+
+            if (isStereo != procLeft->isStereo || isStereo != procRight->isStereo) {
+                juce::MessageManagerLock lock;
+                procLeft->isStereo = isStereo;
+                procRight->isStereo = isStereo;
+
+                procLeft->sliderPan.setEnabled(isStereo);
+                procRight->sliderPan.setEnabled(isStereo);
+            }
         }
         else {
             // valueDelay->load();
@@ -483,7 +496,6 @@ public:
 
         }
         // valueBypass->load();
-        
     }
 
     // TODO: Parameter object would trigger onChange callback
@@ -547,16 +559,23 @@ public:
         filterHighCut.process(context);
     }
 
-    void process_output(juce::AudioBuffer<float> outputBuffer, ProcessorGroup& procLeft, ProcessorGroup& procRight) {
+    void process_output(juce::AudioBuffer<float> outputBuffer) {
         updateParameters();
+        
+        if (isMono && spec.numChannels > 1) {
+            // Left channel into right channel
+            outputBuffer.copyFrom(1, 0, outputBuffer, 0, 0, outputBuffer.getNumSamples());
+        }
 
-        procLeft.process(outputBuffer);
-        procRight.process(outputBuffer);
+        
 
-        mix.pushDrySamples(procLeft.buffer);
-        mix.mixWetSamples(procRight.buffer); // Right buffer holds IR mix
+        procLeft->process(outputBuffer);
+        procRight->process(outputBuffer);
 
-        outputBuffer.makeCopyOf(procRight.buffer, true); // Copy dry buffer
+        mix.pushDrySamples(procLeft->buffer);
+        mix.mixWetSamples(procRight->buffer); // Right buffer holds IR mix
+
+        outputBuffer.makeCopyOf(procRight->buffer, true); // Copy dry buffer
         juce::dsp::AudioBlock<float> audioBlockOut = { outputBuffer };
         juce::dsp::ProcessContextReplacing<float> contextOut = juce::dsp::ProcessContextReplacing<float>(audioBlockOut);
 
@@ -565,14 +584,13 @@ public:
         }
 
         // It's Reverb mix for output WIP
-        pan.pushDrySamples(procRight.buffer);
+        pan.pushDrySamples(procRight->buffer);
         pan.mixWetSamples(outputBuffer);
 
         gain.process(contextOut);
         filterLowCut.process(contextOut);
         filterHighCut.process(contextOut);
-        /*
-        */
+        
     }
 
     void _process(

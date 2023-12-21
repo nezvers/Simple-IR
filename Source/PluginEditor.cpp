@@ -16,6 +16,9 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
 {
     //addAndMakeVisible(sampleDrawer);
     DBG("_PluginAudioProcessorEditor()");
+    //audioProcessor.valueTreeState.addParameterListener(audioProcessor.procOut.id_stereoMode, this);
+    //parameterChanged(audioProcessor.procOut.id_stereoMode, audioProcessor.procOut.isStereo ? 1 : 0);
+
     fileBrowserIR1.setSelectedFile(audioProcessor.procLeft.file, audioProcessor.procLeft.directory);
     fileBrowserIR2.setSelectedFile(audioProcessor.procRight.file, audioProcessor.procRight.directory);
     addAndMakeVisible(fileBrowserIR1);
@@ -69,6 +72,7 @@ PluginAudioProcessorEditor::PluginAudioProcessorEditor (PluginAudioProcessor& p)
 
 PluginAudioProcessorEditor::~PluginAudioProcessorEditor()
 {
+    //audioProcessor.valueTreeState.removeParameterListener(audioProcessor.procOut.id_stereoMode, this);
     DBG("Editor CLOSE");
 }
 
@@ -197,6 +201,5 @@ void PluginAudioProcessorEditor::resized()
     audioProcessor.procRight.buttonInvert.setBounds(ftr_5.expanded(-5, -5));
 
 }
-
 
 

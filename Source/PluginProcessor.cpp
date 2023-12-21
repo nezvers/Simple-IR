@@ -30,6 +30,8 @@ PluginAudioProcessor::PluginAudioProcessor()
         procGroup[i].init(&valueTreeState);
     }
     procLeft.setLinkButtons(procRight);
+    procOut.procLeft = &procLeft;
+    procOut.procRight = &procRight;
 
     variableTree = {
         Parameters::variableTreeName, {},{
@@ -67,7 +69,7 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     //auto totalNumInputChannels  = getTotalNumInputChannels();
     //auto totalNumOutputChannels = getTotalNumOutputChannels();
     
-    procOut.process_output(buffer, procLeft, procRight);
+    procOut.process_output(buffer);
 
     /*
     for (int i = 0; i < 3; i++) {
