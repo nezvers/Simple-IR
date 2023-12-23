@@ -555,6 +555,13 @@ public:
         mix.pushDrySamples(outputBuffer);
         mix.mixWetSamples(audioBlock);
         gain.process(context);
+        
+        bool isInverted = int(valueInvert->load()) == 1;
+        
+        if (isInverted) {
+            buffer.applyGain(-1.0f);
+        }
+
         filterLowCut.process(context);
         filterHighCut.process(context);
     }
@@ -568,9 +575,12 @@ public:
         }
 
         
-
-        procLeft->process(outputBuffer);
-        procRight->process(outputBuffer);
+        if (int(procLeft->valueBypass->load()) != 1) {
+            procLeft->process(outputBuffer);
+        }
+        if (int(procRight->valueBypass->load()) != 1) {
+            procRight->process(outputBuffer);
+        }
 
         mix.pushDrySamples(procLeft->buffer);
         mix.mixWetSamples(procRight->buffer); // Right buffer holds IR mix
