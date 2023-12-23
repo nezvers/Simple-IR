@@ -574,12 +574,20 @@ public:
             outputBuffer.copyFrom(1, 0, outputBuffer, 0, 0, outputBuffer.getNumSamples());
         }
 
+        bool soloLeft = int(procLeft->valueBypass->load()) != 1;
+        bool soloRight = int(procRight->valueBypass->load()) != 1;
         
-        if (int(procLeft->valueBypass->load()) != 1) {
+        if (!soloRight) {
             procLeft->process(outputBuffer);
         }
-        if (int(procRight->valueBypass->load()) != 1) {
+        else {
+            procLeft->buffer.applyGain(0.0f);
+        }
+        if (!soloLeft) {
             procRight->process(outputBuffer);
+        }
+        else {
+            procRight->buffer.applyGain(0.0f);
         }
 
         mix.pushDrySamples(procLeft->buffer);
@@ -600,7 +608,6 @@ public:
         gain.process(contextOut);
         filterLowCut.process(contextOut);
         filterHighCut.process(contextOut);
-        
     }
 
     void _process(
