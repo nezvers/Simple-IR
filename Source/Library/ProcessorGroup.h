@@ -591,7 +591,9 @@ public:
 
     void process_output(juce::AudioBuffer<float> incommingBuffer) {
         updateParameters();
-        
+        const bool DISABLED = int(valueBypass->load()) == 1;
+        if (DISABLED) { return; }
+
         if (isMono && spec.numChannels > 1) {
             // Left channel into right channel
             incommingBuffer.copyFrom(1, 0, incommingBuffer, 0, 0, incommingBuffer.getNumSamples());
