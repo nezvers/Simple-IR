@@ -488,6 +488,8 @@ public:
 
                 procLeft->sliderPan.setEnabled(isStereo);
                 procRight->sliderPan.setEnabled(isStereo);
+
+                
             }
         }
         else {
@@ -566,44 +568,48 @@ public:
         filterHighCut.process(context);
     }
 
-    void process_output(juce::AudioBuffer<float> outputBuffer) {
+    void process_output(juce::AudioBuffer<float> incommingBuffer) {
         updateParameters();
         
         if (isMono && spec.numChannels > 1) {
             // Left channel into right channel
-            outputBuffer.copyFrom(1, 0, outputBuffer, 0, 0, outputBuffer.getNumSamples());
+            incommingBuffer.copyFrom(1, 0, incommingBuffer, 0, 0, incommingBuffer.getNumSamples());
         }
-
-        bool soloLeft = int(procLeft->valueBypass->load()) != 1;
-        bool soloRight = int(procRight->valueBypass->load()) != 1;
+        bool soloLeft = int(procLeft->valueBypass->load()) == 1;
+        bool soloRight = int(procRight->valueBypass->load()) == 1;
         
-        if (!soloRight) {
-            procLeft->process(outputBuffer);
+        
+        if (soloRight || soloLeft) {
+            if (soloRight) {
+                procRight->process(incommingBuffer);
+                incommingBuffer.makeCopyOf(procRight->buffer, true); // Copy for dry buffer
+            }
+            else {
+                procLeft->process(incommingBuffer);
+                incommingBuffer.makeCopyOf(procLeft->buffer, true); // Copy for dry buffer
+            }
         }
         else {
-            procLeft->buffer.applyGain(0.0f);
-        }
-        if (!soloLeft) {
-            procRight->process(outputBuffer);
-        }
-        else {
-            procRight->buffer.applyGain(0.0f);
+            procRight->process(incommingBuffer);
+            procLeft->process(incommingBuffer);
+
+            mix.pushDrySamples(procLeft->buffer);
+            mix.mixWetSamples(procRight->buffer); // Right buffer holds IR mix
+            
+            incommingBuffer.makeCopyOf(procRight->buffer, true); // Copy for dry buffer
         }
 
-        mix.pushDrySamples(procLeft->buffer);
-        mix.mixWetSamples(procRight->buffer); // Right buffer holds IR mix
-
-        outputBuffer.makeCopyOf(procRight->buffer, true); // Copy dry buffer
-        juce::dsp::AudioBlock<float> audioBlockOut = { outputBuffer };
+        
+        pan.pushDrySamples(incommingBuffer); // It's Reverb mix for output (WIP)
+        
+        juce::dsp::AudioBlock<float> audioBlockOut = { incommingBuffer };
         juce::dsp::ProcessContextReplacing<float> contextOut = juce::dsp::ProcessContextReplacing<float>(audioBlockOut);
 
         if (convolution.getCurrentIRSize() > 0) {
             convolution.process(contextOut);
         }
 
-        // It's Reverb mix for output WIP
-        pan.pushDrySamples(procRight->buffer);
-        pan.mixWetSamples(outputBuffer);
+        pan.mixWetSamples(incommingBuffer);
 
         gain.process(contextOut);
         filterLowCut.process(contextOut);
