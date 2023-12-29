@@ -469,12 +469,15 @@ public:
     // Update DSP with atomic values
     void updateParameters() {
         mix.setWetMixProportion(valueMix->load());
-        gain.setGainDecibels(valueGain->load());
+        
+
         *filterLowCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass((int)spec.sampleRate, valueLowCut->load(), 1.0f);
         *filterHighCut.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass((int)spec.sampleRate, valueHighCut->load(), 1.0f);
         
         pan.setWetMixProportion(valuePan->load());
         if (is_output) {
+            gain.setGainDecibels(valueGain->load());
+
             stereoMode = Parameters::enumStereo(int(valueStereoMode->load()));
             int value = (int)valueStereoMode->load();
             isDualMono = value == 0;
@@ -493,9 +496,12 @@ public:
             }
         }
         else {
-            // valueDelay->load();
-            // valueInvert->load();
-
+            if (int(valueInvert->load()) == 0) {
+                gain.setGainDecibels(valueGain->load());
+            }
+            else {
+                gain.setGainDecibels(valueGain->load() * -1.0f);
+            }
         }
         // valueBypass->load();
     }
