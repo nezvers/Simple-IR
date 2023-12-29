@@ -95,6 +95,7 @@ public:
     std::atomic<float>* valueLowCut= nullptr;
     std::atomic<float>* valueHighCut = nullptr;
     std::atomic<float>* valuePan = nullptr;
+    std::atomic<float>* valueReverb = nullptr;
     std::atomic<float>* valueDelay = nullptr;
     std::atomic<float>* valueBypass = nullptr;
     std::atomic<float>* valueInvert = nullptr;
@@ -131,7 +132,8 @@ public:
 
 #pragma region DSP
     juce::dsp::DryWetMixer<float> mix;
-    juce::dsp::DryWetMixer<float> pan;
+    juce::dsp::DryWetMixer<float> mixReverb;
+    juce::dsp::Panner<float> pan;
     juce::dsp::Gain<float> gain;
     juce::dsp::Convolution convolution;
     //LowHighCutFilters filterLowCut;
@@ -162,7 +164,12 @@ public:
         spec = _spec;
         gain.prepare(spec);
         mix.prepare(spec);
-        pan.prepare(spec);
+        if (is_output) {
+            mixReverb.prepare(spec);
+        }
+        else {
+            pan.prepare(spec);
+        }
         convolution.prepare(spec);
         gain.setRampDurationSeconds(0.01);
 
@@ -206,13 +213,14 @@ public:
         valueGain = vts->getRawParameterValue(id_gain);
         valueLowCut = vts->getRawParameterValue(id_lowCut);
         valueHighCut = vts->getRawParameterValue(id_highCut);
-        valuePan = vts->getRawParameterValue(id_pan);
         if (is_output) {
             valueStereoMode = vts->getRawParameterValue(id_stereoMode);
+            valueReverb = vts->getRawParameterValue(id_pan);
         }
         else {
             valueDelay = vts->getRawParameterValue(id_delay);
             valueInvert = vts->getRawParameterValue(id_invert);
+            valuePan = vts->getRawParameterValue(id_pan);
         }
         valueBypass = vts->getRawParameterValue(id_bypass);
     }
@@ -474,9 +482,9 @@ public:
         *filterLowCut.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass((int)spec.sampleRate, valueLowCut->load(), 1.0f);
         *filterHighCut.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass((int)spec.sampleRate, valueHighCut->load(), 1.0f);
         
-        pan.setWetMixProportion(valuePan->load());
         if (is_output) {
             gain.setGainDecibels(valueGain->load());
+            mixReverb.setWetMixProportion(valueReverb->load());
 
             stereoMode = Parameters::enumStereo(int(valueStereoMode->load()));
             int value = (int)valueStereoMode->load();
@@ -484,16 +492,17 @@ public:
             isStereo = value == 1;
             isMono = value == 2;
 
-            if (isStereo != procLeft->isStereo || isStereo != procRight->isStereo) {
+            if (isStereo != procLeft->isStereo) {
                 juce::MessageManagerLock lock;
                 procLeft->isStereo = isStereo;
-                procRight->isStereo = isStereo;
-
                 procLeft->sliderPan.setEnabled(isStereo);
-                procRight->sliderPan.setEnabled(isStereo);
-
-                
             }
+            if (isStereo != procRight->isStereo) {
+                juce::MessageManagerLock lock;
+                procRight->isStereo = isStereo;
+                procRight->sliderPan.setEnabled(isStereo);
+            }
+            mixReverb.setWetMixProportion(valueReverb->load());
         }
         else {
             if (int(valueInvert->load()) == 0) {
@@ -502,8 +511,10 @@ public:
             else {
                 gain.setGainDecibels(valueGain->load() * -1.0f);
             }
+            if (isStereo) {
+                pan.setPan(valuePan->load());
+            }
         }
-        // valueBypass->load();
     }
 
     // TODO: Parameter object would trigger onChange callback
@@ -572,6 +583,10 @@ public:
 
         filterLowCut.process(context);
         filterHighCut.process(context);
+
+        if (isStereo) {
+            pan.process(context);
+        }
     }
 
     void process_output(juce::AudioBuffer<float> incommingBuffer) {
@@ -606,7 +621,7 @@ public:
         }
 
         
-        pan.pushDrySamples(incommingBuffer); // It's Reverb mix for output (WIP)
+        mixReverb.pushDrySamples(incommingBuffer); // It's Reverb mix for output (WIP)
         
         juce::dsp::AudioBlock<float> audioBlockOut = { incommingBuffer };
         juce::dsp::ProcessContextReplacing<float> contextOut = juce::dsp::ProcessContextReplacing<float>(audioBlockOut);
@@ -615,7 +630,7 @@ public:
             convolution.process(contextOut);
         }
 
-        pan.mixWetSamples(incommingBuffer);
+        mixReverb.mixWetSamples(incommingBuffer);
 
         gain.process(contextOut);
         filterLowCut.process(contextOut);
