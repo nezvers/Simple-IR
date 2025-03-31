@@ -59,7 +59,7 @@ public:
 
     ProcessorGroup procGroup[3] = { ProcessorGroup("0", true), ProcessorGroup("1", false), ProcessorGroup("2", false) };
     juce::AudioProcessorValueTreeState valueTreeState{*this, nullptr, "PARAMETERS", createParameterLayout()};
-    juce::ValueTree variableTree;
+    juce::ValueTree valueTree;
     ProcessorGroup& procOut{ procGroup[0]};
     ProcessorGroup& procLeft{ procGroup[1] };
     ProcessorGroup& procRight{ procGroup[2] };

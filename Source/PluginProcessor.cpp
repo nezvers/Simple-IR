@@ -21,7 +21,6 @@ PluginAudioProcessor::PluginAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        )
-    //, valueTreeState(*this, nullptr, "PARAMETERS", createParameterLayout())
 #endif
 {
     DBG("CONSTRUCTOR");
@@ -33,7 +32,7 @@ PluginAudioProcessor::PluginAudioProcessor()
     procOut.procLeft = &procLeft;
     procOut.procRight = &procRight;
 
-    variableTree = {
+    valueTree = {
         Parameters::variableTreeName, {},{
             {
                 "Group", {{"name", "IR Vars"}},{
@@ -47,6 +46,7 @@ PluginAudioProcessor::PluginAudioProcessor()
             }
         }
     };
+    valueTreeState.state.appendChild(valueTree, nullptr);
 }
 
 //==============================================================================
@@ -65,13 +65,13 @@ void PluginAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
 
 void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
-    //juce::ScopedNoDenormals noDenormals;
-    //auto totalNumInputChannels  = getTotalNumInputChannels();
-    //auto totalNumOutputChannels = getTotalNumOutputChannels();
-    
     procOut.process_output(buffer);
 
-    /*
+    juce::ScopedNoDenormals noDenormals;
+    auto totalNumInputChannels  = getTotalNumInputChannels();
+    auto totalNumOutputChannels = getTotalNumOutputChannels();
+    
+
     for (int i = 0; i < 3; i++) {
         procGroup[i].updateParameters();
     }
@@ -90,6 +90,7 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
     procOut.process_combine(contextLeft, contextRight, procLeft.buffer, procRight.buffer);
 
     buffer.makeCopyOf(procOut.buffer);
+    /*
     */
 }
 
@@ -99,10 +100,8 @@ void PluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce:
 void PluginAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     DBG("getStateInformation - SAVE");
-
-    valueTreeState.state.appendChild(variableTree, nullptr);
     
-    auto state = valueTreeState.copyState();
+    juce::ValueTree state = valueTreeState.copyState();
     std::unique_ptr<juce::XmlElement> xml(state.createXml());
     copyXmlToBinary(*xml, destData);
 }
@@ -129,13 +128,10 @@ void PluginAudioProcessor::setStateInformation (const void* data, int sizeInByte
         return;
     }
 
-    variableTree = valueTreeState.state.getChildWithName( Parameters::variableTreeName );
-    if (!variableTree.isValid()) {
-        return;
-    }
+    valueTree = newValueTree;
 
     for (int i = 0; i < 3; i++) {
-        procGroup[i].setStateInformation(&variableTree);
+        procGroup[i].setStateInformation(&valueTree);
     }
     
 }

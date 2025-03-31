@@ -145,16 +145,14 @@ public:
     juce::AudioBuffer<float> buffer;
     juce::File file = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
     juce::File directory = juce::File::getSpecialLocation(juce::File::userDocumentsDirectory);
-    juce::ValueTree* variableTree = nullptr;
-    juce::AudioProcessorValueTreeState* valueTreeState = nullptr;
     Parameters::enumStereo stereoMode = Parameters::enumStereo::DUAL_MONO;
     bool is_output = false;
     ProcessorGroup* other = nullptr;
     FlatStyle1 lookAndFeel;
     juce::dsp::ProcessSpec spec;
-    bool isDualMono;
+    bool isDualMono = false;
     bool isStereo = true;
-    bool isMono;
+    bool isMono = false;
     ProcessorGroup* procLeft; // only for output
     ProcessorGroup* procRight; // only for output
 #pragma endregion
@@ -188,7 +186,6 @@ public:
         initButtons();
         initComboBoxes();
 
-        valueTreeState = vts;
         // Connect attachments to GUI components
         attachmentMix = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(*vts, id_mix, sliderMix);
         attachmentGain = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(*vts, id_gain, sliderGain);
@@ -452,9 +449,7 @@ public:
 
     // LOAD
     void setStateInformation(juce::ValueTree* vt) {
-        DBG("setStateInformation()" + suffix);
-        variableTree = vt;
-        
+        DBG("setStateInformation()" + suffix);        
 
         juce::File fileLoad = juce::File(vt->getProperty(param_file));
         if (!fileLoad.existsAsFile()) {
@@ -518,7 +513,7 @@ public:
     }
 
     // TODO: Parameter object would trigger onChange callback
-    void setFile(juce::File value) {
+    void setFile(juce::File value, juce::ValueTree* vt) {
         DBG("setFile()" + suffix);
         if (!value.existsAsFile()) { return; }
 
@@ -528,8 +523,10 @@ public:
 
         file = value;
         directory = value.getParentDirectory().getFullPathName();
-        variableTree->setProperty(param_file, file.getFullPathName(), nullptr);
-        variableTree->setProperty(param_directory, directory.getFullPathName(), nullptr);
+        juce::String full_path = file.getFullPathName();
+        juce::Identifier param_file_identifier = juce::Identifier(param_file);
+        vt->setProperty(param_file_identifier, full_path, nullptr);
+        vt->setProperty(param_directory, directory.getFullPathName(), nullptr);
         
         convolution.loadImpulseResponse(file,
             juce::dsp::Convolution::Stereo::yes,
